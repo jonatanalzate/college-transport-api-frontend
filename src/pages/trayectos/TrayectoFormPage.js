@@ -26,6 +26,7 @@ const TrayectoFormPage = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [openDialog, setOpenDialog] = useState(false);
     const [trayecto, setTrayecto] = useState({
+        id: '',
         fecha: null,
         hora_salida: null,
         hora_llegada: null,
@@ -43,7 +44,12 @@ const TrayectoFormPage = () => {
     const loadTrayecto = async () => {
         try {
             const data = await trayectosService.getById(id);
-            setTrayecto(data);
+            setTrayecto({
+                ...data,
+                fecha: new Date(data.fecha),
+                hora_salida: new Date(`1970-01-01T${data.hora_salida}`),
+                hora_llegada: new Date(`1970-01-01T${data.hora_llegada}`)
+            });
         } catch (err) {
             setError('Error al cargar el trayecto');
             console.error(err);
@@ -55,6 +61,9 @@ const TrayectoFormPage = () => {
         try {
             const trayectoData = {
                 ...trayecto,
+                fecha: trayecto.fecha.toISOString().split('T')[0],
+                hora_salida: trayecto.hora_salida.toTimeString().split(' ')[0],
+                hora_llegada: trayecto.hora_llegada.toTimeString().split(' ')[0],
                 cantidad_pasajeros: Number(trayecto.cantidad_pasajeros),
                 kilometraje: Number(trayecto.kilometraje)
             };

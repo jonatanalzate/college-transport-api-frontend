@@ -25,11 +25,12 @@ const ConductorFormPage = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [openDialog, setOpenDialog] = useState(false);
     const [conductor, setConductor] = useState({
+        id: '',
         nombre: '',
         cedula: '',
         licencia: '',
         telefono: '',
-        estado: 1
+        estado: '1'
     });
 
     useEffect(() => {
@@ -147,8 +148,8 @@ const ConductorFormPage = () => {
                                 onChange={handleChange}
                                 required
                             >
-                                <MenuItem value={1}>Activo</MenuItem>
-                                <MenuItem value={0}>Inactivo</MenuItem>
+                                <MenuItem value="1">Activo</MenuItem>
+                                <MenuItem value="0">Inactivo</MenuItem>
                             </TextField>
                         </Grid>
                     </Grid>

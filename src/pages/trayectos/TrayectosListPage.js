@@ -11,13 +11,11 @@ const TrayectosListPage = () => {
     const navigate = useNavigate();
 
     const columns = [
-        { id: 'id', label: 'ID' },
-        { id: 'ruta_id', label: 'Ruta' },
-        { id: 'vehiculo_id', label: 'Vehículo' },
-        { id: 'conductor_id', label: 'Conductor' },
-        { id: 'hora_inicio', label: 'Hora Inicio' },
-        { id: 'hora_fin', label: 'Hora Fin' },
-        { id: 'estado', label: 'Estado' }
+        { id: 'fecha', label: 'Fecha' },
+        { id: 'hora_salida', label: 'Hora Salida' },
+        { id: 'hora_llegada', label: 'Hora Llegada' },
+        { id: 'cantidad_pasajeros', label: 'Pasajeros' },
+        { id: 'kilometraje', label: 'Kilometraje' }
     ];
 
     useEffect(() => {
@@ -45,6 +43,10 @@ const TrayectosListPage = () => {
         }
     };
 
+    const handleEdit = (item) => {
+        navigate(`/trayectos/editar/${item.id}`);
+    };
+
     return (
         <>
             <ListPage
@@ -52,8 +54,8 @@ const TrayectosListPage = () => {
                 items={trayectos}
                 columns={columns}
                 onDelete={handleDelete}
+                onEdit={handleEdit}
                 addPath="/trayectos/nuevo"
-                editPath="/trayectos/editar"
                 loading={false}
                 error={error}
             />

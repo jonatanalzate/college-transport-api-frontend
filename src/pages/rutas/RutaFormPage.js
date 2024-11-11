@@ -24,6 +24,7 @@ const RutaFormPage = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [openDialog, setOpenDialog] = useState(false);
     const [ruta, setRuta] = useState({
+        id: '',
         nombre: '',
         codigo: '',
         origen: '',
@@ -118,6 +119,7 @@ const RutaFormPage = () => {
                                 name="codigo"
                                 value={ruta.codigo}
                                 onChange={handleChange}
+                                disabled={!!id}
                                 required={!id}
                             />
                         </Grid>

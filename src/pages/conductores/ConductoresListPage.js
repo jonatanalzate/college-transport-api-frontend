@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Alert, Snackbar } from '@mui/material';
 import ListPage from '../../components/ListPage';
 import { conductoresService } from '../../services/conductoresService';
+import { useNavigate } from 'react-router-dom';
 
 const ConductoresListPage = () => {
     const [conductores, setConductores] = useState([]);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
+    const navigate = useNavigate();
 
     const columns = [
         { id: 'id', label: 'ID' },
@@ -41,6 +43,10 @@ const ConductoresListPage = () => {
         }
     };
 
+    const handleEdit = (item) => {
+        navigate(`/conductores/editar/${item.id}`);
+    };
+
     return (
         <>
             <ListPage
@@ -48,8 +54,8 @@ const ConductoresListPage = () => {
                 items={conductores}
                 columns={columns}
                 onDelete={handleDelete}
+                onEdit={handleEdit}
                 addPath="/conductores/nuevo"
-                editPath="/conductores/editar"
                 loading={false}
                 error={error}
             />

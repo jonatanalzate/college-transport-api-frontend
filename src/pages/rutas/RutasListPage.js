@@ -11,13 +11,11 @@ const RutasListPage = () => {
     const navigate = useNavigate();
 
     const columns = [
-        { id: 'id', label: 'ID' },
+        { id: 'codigo', label: 'Código' },
         { id: 'nombre', label: 'Nombre' },
         { id: 'origen', label: 'Origen' },
         { id: 'destino', label: 'Destino' },
-        { id: 'hora_inicio', label: 'Hora Inicio' },
-        { id: 'hora_fin', label: 'Hora Fin' },
-        { id: 'estado', label: 'Estado' }
+        { id: 'duracion_estimada', label: 'Duración (min)' }
     ];
 
     useEffect(() => {
@@ -45,6 +43,10 @@ const RutasListPage = () => {
         }
     };
 
+    const handleEdit = (item) => {
+        navigate(`/rutas/editar/${item.id}`);
+    };
+
     return (
         <>
             <ListPage
@@ -53,7 +55,7 @@ const RutasListPage = () => {
                 columns={columns}
                 onDelete={handleDelete}
                 addPath="/rutas/nueva"
-                editPath="/rutas/editar"
+                onEdit={handleEdit}
                 loading={false}
                 error={error}
             />

@@ -31,17 +31,30 @@ export const rutasService = {
                 duracion_estimada: Number(ruta.duracion_estimada)
             };
 
-            const response = await api.post('/rutas/', rutaData);
-            return response.data;
+            const response = await api.post('/rutas/', [rutaData]);
+            return response.data[0];
         } catch (error) {
             console.error('Error completo:', error);
             throw new Error(error.response?.data?.detail || 'Error al crear la ruta');
         }
     },
 
-    update: async (id, ruta) => {
+    update: async (id, rutaActualizada) => {
         try {
-            const response = await api.put(`/ruta/${id}`, ruta);
+            if (!id) {
+                throw new Error('El ID de la ruta es requerido');
+            }
+
+            const rutaData = {
+                id: id,
+                nombre: rutaActualizada.nombre?.trim(),
+                codigo: rutaActualizada.codigo?.trim(),
+                origen: rutaActualizada.origen?.trim(),
+                destino: rutaActualizada.destino?.trim(),
+                duracion_estimada: Number(rutaActualizada.duracion_estimada)
+            };
+
+            const response = await api.put(`/ruta/${id}`, rutaData);
             return response.data;
         } catch (error) {
             console.error('Error al actualizar:', error.response?.data);

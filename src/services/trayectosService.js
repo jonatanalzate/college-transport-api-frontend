@@ -42,17 +42,31 @@ export const trayectosService = {
                 observaciones: trayecto.observaciones
             };
 
-            const response = await api.post('/trayectos/', trayectoData);
-            return response.data;
+            const response = await api.post('/trayectos/', [trayectoData]);
+            return response.data[0];
         } catch (error) {
             console.error('Error completo:', error);
             throw new Error(error.response?.data?.detail || 'Error al crear el trayecto');
         }
     },
 
-    update: async (id, trayecto) => {
+    update: async (id, trayectoActualizado) => {
         try {
-            const response = await api.put(`/trayecto/${id}`, trayecto);
+            if (!id) {
+                throw new Error('El ID del trayecto es requerido');
+            }
+
+            const trayectoData = {
+                id: id,
+                fecha: trayectoActualizado.fecha,
+                hora_salida: trayectoActualizado.hora_salida,
+                hora_llegada: trayectoActualizado.hora_llegada,
+                cantidad_pasajeros: Number(trayectoActualizado.cantidad_pasajeros),
+                kilometraje: Number(trayectoActualizado.kilometraje),
+                observaciones: trayectoActualizado.observaciones
+            };
+
+            const response = await api.put(`/trayecto/${id}`, trayectoData);
             return response.data;
         } catch (error) {
             console.error('Error al actualizar:', error.response?.data);
