@@ -1,0 +1,39 @@
+En términos de carga de datos, visualización de rutas, y una arquitectura limpia, vamos usar React como opción. React es versátil y cuenta con una amplia gama de bibliotecas compatibles para los requisitos específicos de tu proyecto, como la carga de archivos CSV y la integración de mapas.
+
+Necesito que el proyecto este montado en un entorno virtual en la carpeta donde ya estamos ubicados.
+
+Guion detallado para el desarrollo en Cursor
+
+	1.	Configuración del Entorno de Desarrollo:
+	•	Inicializar un proyecto en React (npx create-react-app college-transport-frontend).
+	•	Crear una estructura de carpetas que siga los principios de Clean Architecture:
+	•	/src/components: Para componentes de la interfaz de usuario.
+	•	/src/pages: Para las páginas principales (ej. página de carga, página de rutas).
+	•	/src/services: Para las funciones de llamada a la API de FastAPI.
+	•	/src/utils: Para utilidades y funciones auxiliares.
+	•	/src/hooks: Para React hooks personalizados.
+	•	/src/styles: Para estilos y temas CSS.
+	•	/src/assets: Para almacenar imágenes o archivos estáticos.
+	2.	Configurar la Conexión con el Backend:
+	•	Crear archivos en /src/services para los endpoints de FastAPI:
+	•	vehiculosService.js, rutasService.js, conductoresService.js, etc.
+	•	Implementar las funciones para hacer llamadas HTTP (GET, POST, PUT, etc.) a las APIs.
+	3.	Módulo de Carga de Datos:
+	•	Crear un componente en /src/components/UploadCsv.js para la carga de archivos CSV.
+	•	Usar una biblioteca como react-csv-reader o papaparse para leer y parsear archivos CSV.
+	•	Enviar los datos al backend con un endpoint adecuado para carga masiva.
+	4.	Mapa en Tiempo Real:
+	•	Integrar una biblioteca de mapas, como react-leaflet, para mostrar el mapa de Manizales.
+	•	Crear un componente en /src/components/MapView.js para la visualización de rutas.
+	•	Configurar el componente para recibir las coordenadas de una ruta seleccionada y mostrar un marcador de seguimiento.
+	5.	Página Principal y Navegación:
+	•	Crear una página principal en /src/pages/Home.js que incluya:
+	•	Un menú de navegación entre los módulos (carga de datos, visualización de rutas, etc.).
+	•	Un área de trabajo para visualizar el mapa, detalles de rutas, y un botón para cargar CSV.
+	6.	Interacción con la API para Gestión de Rutas:
+	•	Crear un formulario en /src/components/RouteForm.js para asignar y administrar rutas de transporte.
+	•	Conectar el formulario con el backend a través de /src/services/rutasService.js para enviar y recibir datos en tiempo real.
+	7.	Estilos y Diseño Visual:
+	•	Usar CSS Modules o una biblioteca de diseño como Material-UI para mantener el diseño limpio y atractivo.
+	8.	Configuración de Ramas y Control de Versiones:
+	•	Crear las ramas main y develop en GitHub, y mantener el desarrollo activo en develop hasta que esté listo para producción.

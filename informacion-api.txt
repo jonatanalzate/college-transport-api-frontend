@@ -1,0 +1,127 @@
+*schema vehiculo:
+
+# app/domain/schemas/vehiculo_schemas.py
+from pydantic import BaseModel
+from typing import Optional
+
+class VehiculoCrear(BaseModel):
+    marca: str
+    placa: str
+    modelo: str
+    lateral: str
+    año_de_fabricacion: int
+    capacidad_pasajeros: int
+    estado_operativo: str
+
+class Vehiculo(BaseModel):
+    id: str
+    marca: str
+    placa: str
+    modelo: str
+    lateral: str
+    año_de_fabricacion: int
+    capacidad_pasajeros: int
+    estado_operativo: str
+
+class VehiculoActualizar(BaseModel):
+    marca: Optional[str] = None
+    placa: Optional[str] = None
+    modelo: Optional[str] = None
+    lateral: Optional[str] = None
+    año_de_fabricacion: Optional[int] = None
+    capacidad_pasajeros: Optional[int] = None
+    estado_operativo: Optional[str] = None
+
+--------------------------------
+
+*schema trayecto:
+
+# app/domain/schemas/vehiculo_schemas.py
+from pydantic import BaseModel
+from typing import Optional
+from datetime import date, time
+
+class TrayectoCrear(BaseModel):
+    fecha: date
+    hora_salida: time
+    hora_llegada: time
+    cantidad_pasajeros: int
+    kilometraje: int
+    observaciones: Optional[str] = None
+
+class Trayecto(BaseModel):
+    id: str
+    fecha: date
+    hora_salida: time
+    hora_llegada: time
+    cantidad_pasajeros: int
+    kilometraje: int
+    observaciones: Optional[str] = None
+
+class TrayectoActualizar(BaseModel):
+    fecha: Optional[date] = None
+    hora_salida: Optional[time] = None
+    hora_llegada: Optional[time] = None
+    cantidad_pasajeros: Optional[str] = None
+    kilometraje: Optional[int] = None
+    observaciones: Optional[str] = None
+
+--------------------------------
+
+*schema ruta:
+
+# app/domain/schemas/vehiculo_schemas.py
+from pydantic import BaseModel
+from typing import Optional
+
+class RutaCrear(BaseModel):
+    nombre: str
+    codigo: str
+    origen: str
+    destino: str
+    duracion_estimada: int
+
+class Ruta(BaseModel):
+    id: str
+    nombre: str
+    codigo: str
+    origen: str
+    destino: str
+    duracion_estimada: int
+
+class RutaActualizar(BaseModel):
+    nombre: Optional[str] = None
+    codigo: Optional[str] = None
+    origen: Optional[str] = None
+    destino: Optional[str] = None
+    duracion_estimada: Optional[int] = None
+
+--------------------------------
+
+*schema conductor:
+
+# app/domain/schemas/vehiculo_schemas.py
+from pydantic import BaseModel
+from typing import Optional
+
+class ConductorCrear(BaseModel):
+    nombre: str
+    cedula: str
+    licencia: str
+    telefono: str
+    estado: int
+
+class Conductor(BaseModel):
+    id: str
+    nombre: str
+    cedula: str
+    licencia: str
+    telefono: str
+    estado: str 
+
+class ConductorActualizar(BaseModel):
+    nombre: Optional[str] = None
+    cedula: Optional[str] = None
+    licencia: Optional[str] = None
+    telefono: Optional[str] = None
+    estado: Optional[str] = None
