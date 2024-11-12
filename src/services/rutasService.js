@@ -6,7 +6,12 @@ export const rutasService = {
         try {
             const response = await api.get('/rutas/');
             return response.data.map(ruta => ({
-                ...ruta,
+                id: ruta.id,
+                nombre: ruta.nombre || '',
+                codigo: ruta.codigo || '',
+                origen: ruta.origen || '',
+                destino: ruta.destino || '',
+                duracion_estimada: ruta.duracion_estimada || '',
                 origen_coordenadas: ruta.origen_coordenadas || null,
                 destino_coordenadas: ruta.destino_coordenadas || null
             }));

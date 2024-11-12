@@ -25,7 +25,20 @@ const RutasListPage = () => {
     const loadRutas = async () => {
         try {
             const data = await rutasService.getAll();
-            setRutas(data);
+            if (Array.isArray(data)) {
+                const rutasFormateadas = data.map(ruta => ({
+                    id: ruta.id,
+                    codigo: ruta.codigo || '',
+                    nombre: ruta.nombre || '',
+                    origen: ruta.origen || '',
+                    destino: ruta.destino || '',
+                    duracion_estimada: ruta.duracion_estimada || ''
+                }));
+                setRutas(rutasFormateadas);
+            } else {
+                setError('Los datos recibidos no tienen el formato esperado');
+                console.error('Datos recibidos:', data);
+            }
         } catch (err) {
             setError('Error al cargar las rutas');
             console.error(err);
