@@ -15,7 +15,12 @@ const TrayectosListPage = () => {
         { id: 'hora_salida', label: 'Hora Salida' },
         { id: 'hora_llegada', label: 'Hora Llegada' },
         { id: 'cantidad_pasajeros', label: 'Pasajeros' },
-        { id: 'kilometraje', label: 'Kilometraje' }
+        { id: 'kilometraje', label: 'Kilometraje' },
+        { 
+            id: 'ruta', 
+            label: 'Ruta',
+            render: (item) => item.ruta ? `${item.ruta.nombre} (${item.ruta.origen} - ${item.ruta.destino})` : 'N/A'
+        }
     ];
 
     useEffect(() => {

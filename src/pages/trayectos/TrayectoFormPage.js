@@ -13,11 +13,16 @@ import {
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle
+    DialogTitle,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem
 } from '@mui/material';
 import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { trayectosService } from '../../services/trayectosService';
+import { rutasService } from '../../services/rutasService';
 
 const TrayectoFormPage = () => {
     const { id } = useParams();
@@ -32,14 +37,27 @@ const TrayectoFormPage = () => {
         hora_llegada: null,
         cantidad_pasajeros: '',
         kilometraje: '',
-        observaciones: ''
+        observaciones: '',
+        ruta_id: ''
     });
+    const [rutas, setRutas] = useState([]);
 
     useEffect(() => {
+        loadRutas();
         if (id) {
             loadTrayecto();
         }
     }, [id]);
+
+    const loadRutas = async () => {
+        try {
+            const data = await rutasService.getAll();
+            setRutas(data);
+        } catch (err) {
+            setError('Error al cargar las rutas');
+            console.error(err);
+        }
+    };
 
     const loadTrayecto = async () => {
         try {
@@ -115,6 +133,23 @@ const TrayectoFormPage = () => {
                 </Typography>
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
                     <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth required>
+                                <InputLabel>Ruta</InputLabel>
+                                <Select
+                                    value={trayecto.ruta_id}
+                                    name="ruta_id"
+                                    onChange={handleChange}
+                                    label="Ruta"
+                                >
+                                    {rutas.map((ruta) => (
+                                        <MenuItem key={ruta.id} value={ruta.id}>
+                                            {ruta.nombre} - {ruta.origen} a {ruta.destino}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
                         <Grid item xs={12}>
                             <DatePicker
                                 label="Fecha"

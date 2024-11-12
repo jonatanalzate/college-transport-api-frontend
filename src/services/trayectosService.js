@@ -39,7 +39,8 @@ export const trayectosService = {
                 hora_llegada: trayecto.hora_llegada,
                 cantidad_pasajeros: Number(trayecto.cantidad_pasajeros),
                 kilometraje: Number(trayecto.kilometraje),
-                observaciones: trayecto.observaciones
+                observaciones: trayecto.observaciones,
+                ruta_id: trayecto.ruta_id
             };
 
             const response = await api.post('/trayectos/', [trayectoData]);
@@ -63,7 +64,8 @@ export const trayectosService = {
                 hora_llegada: trayectoActualizado.hora_llegada,
                 cantidad_pasajeros: Number(trayectoActualizado.cantidad_pasajeros),
                 kilometraje: Number(trayectoActualizado.kilometraje),
-                observaciones: trayectoActualizado.observaciones
+                observaciones: trayectoActualizado.observaciones,
+                ruta_id: trayectoActualizado.ruta_id
             };
 
             const response = await api.put(`/trayecto/${id}`, trayectoData);
