@@ -20,6 +20,16 @@ const TrayectosListPage = () => {
             id: 'ruta', 
             label: 'Ruta',
             render: (item) => item.ruta ? `${item.ruta.nombre} (${item.ruta.origen} - ${item.ruta.destino})` : 'N/A'
+        },
+        {
+            id: 'vehiculo',
+            label: 'Vehículo',
+            render: (item) => item.vehiculo ? `${item.vehiculo.placa} - ${item.vehiculo.modelo}` : 'N/A'
+        },
+        {
+            id: 'conductor',
+            label: 'Conductor',
+            render: (item) => item.conductor ? `${item.conductor.nombre} ${item.conductor.apellido}` : 'N/A'
         }
     ];
 

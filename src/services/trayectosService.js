@@ -37,10 +37,12 @@ export const trayectosService = {
                 fecha: trayecto.fecha,
                 hora_salida: trayecto.hora_salida,
                 hora_llegada: trayecto.hora_llegada,
-                cantidad_pasajeros: Number(trayecto.cantidad_pasajeros),
-                kilometraje: Number(trayecto.kilometraje),
+                cantidad_pasajeros: String(trayecto.cantidad_pasajeros),
+                kilometraje: String(trayecto.kilometraje),
                 observaciones: trayecto.observaciones,
-                ruta_id: trayecto.ruta_id
+                ruta_id: trayecto.ruta_id,
+                vehiculo_id: trayecto.vehiculo_id,
+                conductor_id: trayecto.conductor_id
             };
 
             const response = await api.post('/trayectos/', [trayectoData]);
@@ -62,23 +64,51 @@ export const trayectosService = {
                 fecha: trayectoActualizado.fecha,
                 hora_salida: trayectoActualizado.hora_salida,
                 hora_llegada: trayectoActualizado.hora_llegada,
-                cantidad_pasajeros: Number(trayectoActualizado.cantidad_pasajeros),
-                kilometraje: Number(trayectoActualizado.kilometraje),
+                cantidad_pasajeros: String(trayectoActualizado.cantidad_pasajeros),
+                kilometraje: String(trayectoActualizado.kilometraje),
                 observaciones: trayectoActualizado.observaciones,
-                ruta_id: trayectoActualizado.ruta_id
+                ruta_id: trayectoActualizado.ruta_id,
+                vehiculo_id: trayectoActualizado.vehiculo_id,
+                conductor_id: trayectoActualizado.conductor_id
             };
 
-            const response = await api.put(`/trayecto/${id}`, trayectoData);
-            return response.data;
+            try {
+                const response = await api.put(`/trayecto/${id}`, trayectoData);
+                console.log('Respuesta exitosa:', response.data);
+                return response.data;
+            } catch (apiError) {
+                console.error('Error de la API:', {
+                    status: apiError.response?.status,
+                    statusText: apiError.response?.statusText,
+                    data: apiError.response?.data,
+                    detail: apiError.response?.data?.detail
+                });
+
+                // Lanzar el error con el mensaje específico
+                throw new Error(apiError.response?.data?.detail || 'Error al actualizar el trayecto');
+            }
         } catch (error) {
-            console.error('Error al actualizar:', error.response?.data);
-            throw new Error(error.response?.data?.detail || 'Error al actualizar el trayecto');
+            console.error('Error en update:', error);
+            throw error;
         }
     },
 
     updatePartial: async (id, trayecto) => {
         try {
-            const response = await api.patch(`/trayecto/${id}`, trayecto);
+            const trayectoData = {
+                ...trayecto,
+                ruta_id: trayecto.ruta_id || '',
+                cantidad_pasajeros: String(trayecto.cantidad_pasajeros),
+                kilometraje: String(trayecto.kilometraje),
+                vehiculo_id: trayecto.vehiculo_id || '',
+                conductor_id: trayecto.conductor_id || ''
+            };
+
+            if (trayectoData.ruta) {
+                delete trayectoData.ruta;
+            }
+
+            const response = await api.patch(`/trayecto/${id}`, trayectoData);
             return response.data;
         } catch (error) {
             console.error('Error al actualizar:', error.response?.data);

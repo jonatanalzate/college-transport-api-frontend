@@ -23,6 +23,8 @@ import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-picker
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { trayectosService } from '../../services/trayectosService';
 import { rutasService } from '../../services/rutasService';
+import { vehiculosService } from '../../services/vehiculosService';
+import { conductoresService } from '../../services/conductoresService';
 
 const TrayectoFormPage = () => {
     const { id } = useParams();
@@ -38,16 +40,37 @@ const TrayectoFormPage = () => {
         cantidad_pasajeros: '',
         kilometraje: '',
         observaciones: '',
-        ruta_id: ''
+        ruta_id: '',
+        vehiculo_id: '',
+        conductor_id: ''
     });
     const [rutas, setRutas] = useState([]);
+    const [vehiculos, setVehiculos] = useState([]);
+    const [conductores, setConductores] = useState([]);
+    const [trayectosActivos, setTrayectosActivos] = useState([]);
+    const [conductoresDisponibles, setConductoresDisponibles] = useState([]);
+    const [vehiculosDisponibles, setVehiculosDisponibles] = useState([]);
 
     useEffect(() => {
+        loadTrayectosActivos();
         loadRutas();
+        loadVehiculos();
+        loadConductores();
         if (id) {
             loadTrayecto();
         }
     }, [id]);
+
+    const loadTrayectosActivos = async () => {
+        try {
+            const data = await trayectosService.getActivos();
+            setTrayectosActivos(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error('Error al cargar trayectos activos:', err);
+            setError('Error al cargar trayectos activos');
+            setTrayectosActivos([]);
+        }
+    };
 
     const loadRutas = async () => {
         try {
@@ -59,11 +82,32 @@ const TrayectoFormPage = () => {
         }
     };
 
+    const loadVehiculos = async () => {
+        try {
+            const data = await vehiculosService.getAll();
+            setVehiculos(data);
+        } catch (err) {
+            setError('Error al cargar los vehículos');
+            console.error(err);
+        }
+    };
+
+    const loadConductores = async () => {
+        try {
+            const data = await conductoresService.getAll();
+            setConductores(data);
+        } catch (err) {
+            setError('Error al cargar los conductores');
+            console.error(err);
+        }
+    };
+
     const loadTrayecto = async () => {
         try {
             const data = await trayectosService.getById(id);
             setTrayecto({
                 ...data,
+                ruta_id: data.ruta_id || '',
                 fecha: new Date(data.fecha),
                 hora_salida: new Date(`1970-01-01T${data.hora_salida}`),
                 hora_llegada: new Date(`1970-01-01T${data.hora_llegada}`)
@@ -77,30 +121,104 @@ const TrayectoFormPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            const horaSalida = trayecto.hora_salida?.toTimeString().split(' ')[0];
+            const horaLlegada = trayecto.hora_llegada?.toTimeString().split(' ')[0];
+            
+            // Validar que todos los campos necesarios estén presentes
+            if (!trayecto.fecha || !horaSalida || !horaLlegada || 
+                !trayecto.cantidad_pasajeros || !trayecto.kilometraje || 
+                !trayecto.ruta_id || !trayecto.vehiculo_id || !trayecto.conductor_id) {
+                setError('Todos los campos son requeridos excepto observaciones');
+                return;
+            }
+
+            const activos = Array.isArray(trayectosActivos) ? trayectosActivos : [];
+            
+            // Verificar conflictos de horario
+            const conflictos = activos.filter(trayectoActivo => {
+                // Ignorar el trayecto actual en edición
+                if (trayectoActivo.id === id) return false;
+                
+                const trayectoInicio = new Date(`1970-01-01T${trayectoActivo.hora_salida}`);
+                const trayectoFin = new Date(`1970-01-01T${trayectoActivo.hora_llegada}`);
+                const nuevoInicio = new Date(`1970-01-01T${horaSalida}`);
+                const nuevoFin = new Date(`1970-01-01T${horaLlegada}`);
+
+                const hayConflictoHorario = (
+                    (nuevoInicio >= trayectoInicio && nuevoInicio <= trayectoFin) ||
+                    (nuevoFin >= trayectoInicio && nuevoFin <= trayectoFin) ||
+                    (nuevoInicio <= trayectoInicio && nuevoFin >= trayectoFin)
+                );
+
+                return hayConflictoHorario && (
+                    trayectoActivo.conductor_id === trayecto.conductor_id ||
+                    trayectoActivo.vehiculo_id === trayecto.vehiculo_id
+                );
+            });
+
+            if (conflictos.length > 0) {
+                const conductorConflicto = conflictos.some(t => t.conductor_id === trayecto.conductor_id);
+                const vehiculoConflicto = conflictos.some(t => t.vehiculo_id === trayecto.vehiculo_id);
+                
+                if (conductorConflicto && vehiculoConflicto) {
+                    setError('No se puede actualizar: El conductor y el vehículo ya están asignados a otro trayecto en este horario');
+                } else if (conductorConflicto) {
+                    setError('No se puede actualizar: El conductor ya está asignado a otro trayecto en este horario');
+                } else {
+                    setError('No se puede actualizar: El vehículo ya está asignado a otro trayecto en este horario');
+                }
+                return;
+            }
+
             const trayectoData = {
                 ...trayecto,
                 fecha: trayecto.fecha.toISOString().split('T')[0],
-                hora_salida: trayecto.hora_salida.toTimeString().split(' ')[0],
-                hora_llegada: trayecto.hora_llegada.toTimeString().split(' ')[0],
+                hora_salida: horaSalida,
+                hora_llegada: horaLlegada,
                 cantidad_pasajeros: Number(trayecto.cantidad_pasajeros),
                 kilometraje: Number(trayecto.kilometraje)
             };
 
             if (id) {
-                await trayectosService.update(id, trayectoData);
-                setSuccessMessage('Trayecto actualizado exitosamente');
-            } else {
-                if (!trayecto.fecha || !trayecto.hora_salida || !trayecto.hora_llegada || 
-                    !trayecto.cantidad_pasajeros || !trayecto.kilometraje) {
-                    setError('Todos los campos son requeridos excepto observaciones');
+                try {
+                    console.log('Intentando actualizar trayecto:', trayectoData);
+                    const resultado = await trayectosService.update(id, trayectoData);
+                    console.log('Resultado de la actualización:', resultado);
+                    
+                    // Verificar si el resultado contiene un mensaje de error
+                    if (resultado && resultado.detail) {
+                        setError(resultado.detail);
+                        return;
+                    }
+                    
+                    setSuccessMessage('Trayecto actualizado exitosamente');
+                    setTimeout(() => navigate('/trayectos/lista'), 2000);
+                } catch (updateError) {
+                    console.error('Error de actualización:', updateError);
+                    // Mostrar el mensaje de error
+                    setError(updateError.message || 'Error al actualizar el trayecto');
                     return;
                 }
-                await trayectosService.create(trayectoData);
-                setSuccessMessage('Trayecto creado exitosamente');
+            } else {
+                try {
+                    await trayectosService.create(trayectoData);
+                    setSuccessMessage('Trayecto creado exitosamente');
+                    setTimeout(() => navigate('/trayectos/lista'), 2000);
+                } catch (createError) {
+                    console.error('Error de creación:', createError);
+                    if (createError.response?.status === 400) {
+                        setError(createError.response.data.detail || 'El conductor o vehículo ya está asignado a otro trayecto en este horario');
+                    } else {
+                        setError('No se pudo crear el trayecto: Verifique la disponibilidad del conductor y vehículo');
+                    }
+                    return;
+                }
             }
-            setTimeout(() => navigate('/trayectos/lista'), 2000);
         } catch (err) {
-            setError(err.message || 'Error al guardar el trayecto');
+            const errorMessage = err.response?.data?.detail || 
+                               err.message || 
+                               'Error al procesar la solicitud';
+            setError(`No se puede procesar la solicitud: ${errorMessage}`);
             console.error('Error completo:', err);
         }
     };
@@ -123,6 +241,50 @@ const TrayectoFormPage = () => {
             ...prev,
             [name]: value
         }));
+
+        if (name === 'hora_salida' || name === 'hora_llegada') {
+            const newTrayecto = {
+                ...trayecto,
+                [name]: value
+            };
+            verificarDisponibilidad(
+                newTrayecto.hora_salida?.toTimeString().split(' ')[0],
+                newTrayecto.hora_llegada?.toTimeString().split(' ')[0]
+            );
+        }
+    };
+
+    const verificarDisponibilidad = (horaSalida, horaLlegada) => {
+        if (!horaSalida || !horaLlegada) return;
+
+        const conductoresOcupados = new Set();
+        const vehiculosOcupados = new Set();
+
+        const activos = Array.isArray(trayectosActivos) ? trayectosActivos : [];
+
+        activos.forEach(trayectoActivo => {
+            if (trayectoActivo.id === id) return;
+
+            const trayectoInicio = new Date(`1970-01-01T${trayectoActivo.hora_salida}`);
+            const trayectoFin = new Date(`1970-01-01T${trayectoActivo.hora_llegada}`);
+            const nuevoInicio = new Date(`1970-01-01T${horaSalida}`);
+            const nuevoFin = new Date(`1970-01-01T${horaLlegada}`);
+
+            if (
+                (nuevoInicio >= trayectoInicio && nuevoInicio <= trayectoFin) ||
+                (nuevoFin >= trayectoInicio && nuevoFin <= trayectoFin) ||
+                (nuevoInicio <= trayectoInicio && nuevoFin >= trayectoFin)
+            ) {
+                conductoresOcupados.add(trayectoActivo.conductor_id);
+                vehiculosOcupados.add(trayectoActivo.vehiculo_id);
+            }
+        });
+
+        const conductoresDisp = conductores.filter(c => !conductoresOcupados.has(c.id));
+        const vehiculosDisp = vehiculos.filter(v => !vehiculosOcupados.has(v.id));
+
+        setConductoresDisponibles(conductoresDisp);
+        setVehiculosDisponibles(vehiculosDisp);
     };
 
     return (
@@ -214,6 +376,52 @@ const TrayectoFormPage = () => {
                                 multiline
                                 rows={4}
                             />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth required>
+                                <InputLabel>Vehículo</InputLabel>
+                                <Select
+                                    value={trayecto.vehiculo_id}
+                                    name="vehiculo_id"
+                                    onChange={handleChange}
+                                    label="Vehículo"
+                                >
+                                    {(vehiculosDisponibles.length > 0 ? vehiculosDisponibles : vehiculos).map((vehiculo) => (
+                                        <MenuItem 
+                                            key={vehiculo.id} 
+                                            value={vehiculo.id}
+                                            disabled={vehiculosDisponibles.length > 0 && !vehiculosDisponibles.find(v => v.id === vehiculo.id)}
+                                        >
+                                            {vehiculo.placa} - {vehiculo.modelo}
+                                            {vehiculosDisponibles.length > 0 && !vehiculosDisponibles.find(v => v.id === vehiculo.id) && 
+                                                " (No disponible en este horario)"}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth required>
+                                <InputLabel>Conductor</InputLabel>
+                                <Select
+                                    value={trayecto.conductor_id}
+                                    name="conductor_id"
+                                    onChange={handleChange}
+                                    label="Conductor"
+                                >
+                                    {(conductoresDisponibles.length > 0 ? conductoresDisponibles : conductores).map((conductor) => (
+                                        <MenuItem 
+                                            key={conductor.id} 
+                                            value={conductor.id}
+                                            disabled={conductoresDisponibles.length > 0 && !conductoresDisponibles.find(c => c.id === conductor.id)}
+                                        >
+                                            {conductor.nombre} {conductor.apellido}
+                                            {conductoresDisponibles.length > 0 && !conductoresDisponibles.find(c => c.id === conductor.id) && 
+                                                " (No disponible en este horario)"}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
                         </Grid>
                     </Grid>
                     <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>

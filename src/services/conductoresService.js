@@ -1,5 +1,4 @@
 import api from './api';
-import { ENDPOINTS } from '../config/api.config';
 
 export const conductoresService = {
     getAll: async () => {

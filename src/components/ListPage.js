@@ -75,7 +75,7 @@ const ListPage = ({
                                 <TableRow key={item.id || item.placa}>
                                     {columns.map((column) => (
                                         <TableCell key={`${item.id}-${column.id}`}>
-                                            {item[column.id]}
+                                            {column.render ? column.render(item) : item[column.id]}
                                         </TableCell>
                                     ))}
                                     <TableCell>
