@@ -5,80 +5,188 @@ import {
     Typography,
     Card,
     CardContent,
-    CardActions,
-    Button,
-    Box
+    Box,
+    Paper,
+    useTheme
 } from '@mui/material';
-import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
-import RouteIcon from '@mui/icons-material/Route';
-import PeopleIcon from '@mui/icons-material/People';
 import TimelineIcon from '@mui/icons-material/Timeline';
-import { useNavigate } from 'react-router-dom';
+import SpeedIcon from '@mui/icons-material/Speed';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
+import AutoGraphIcon from '@mui/icons-material/AutoGraph';
+import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
+import PeopleIcon from '@mui/icons-material/People';
 
 const Home = () => {
-    const navigate = useNavigate();
+    const theme = useTheme();
 
-    const modules = [
+    const beneficios = [
         {
-            title: 'Gestión de Vehículos',
-            description: 'Administre la flota de vehículos, registre nuevos vehículos y gestione su estado.',
-            icon: <DirectionsBusIcon sx={{ fontSize: 40 }} />,
-            path: '/vehiculos/lista'
+            icon: <SpeedIcon sx={{ fontSize: 40, color: theme.palette.primary.main }} />,
+            title: 'Optimización de Tiempos',
+            description: 'Control preciso de recorridos y reducción de tiempos de espera'
         },
         {
-            title: 'Gestión de Rutas',
-            description: 'Configure y administre las rutas de transporte, visualice en mapa.',
-            icon: <RouteIcon sx={{ fontSize: 40 }} />,
-            path: '/rutas/lista'
+            icon: <AnalyticsIcon sx={{ fontSize: 40, color: theme.palette.primary.main }} />,
+            title: 'Datos en Tiempo Real',
+            description: 'Toma de decisiones informada basada en datos actualizados'
         },
         {
-            title: 'Gestión de Conductores',
-            description: 'Administre los conductores, sus licencias y asignaciones.',
-            icon: <PeopleIcon sx={{ fontSize: 40 }} />,
-            path: '/conductores/lista'
+            icon: <AutoGraphIcon sx={{ fontSize: 40, color: theme.palette.primary.main }} />,
+            title: 'Mayor Eficiencia',
+            description: 'Mejora en la gestión de recursos y planificación de rutas'
         },
         {
-            title: 'Gestión de Trayectos',
-            description: 'Configure y monitoree los trayectos activos.',
-            icon: <TimelineIcon sx={{ fontSize: 40 }} />,
-            path: '/trayectos/lista'
+            icon: <PeopleIcon sx={{ fontSize: 40, color: theme.palette.primary.main }} />,
+            title: 'Experiencia Mejorada',
+            description: 'Mejor servicio para los usuarios del transporte público'
         }
     ];
 
     return (
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Typography variant="h4" gutterBottom component="h1" align="center" sx={{ mb: 4 }}>
-                Sistema de Monitoreo y Gestión de Transporte Público
-            </Typography>
-            
-            <Grid container spacing={3}>
-                {modules.map((module) => (
-                    <Grid item xs={12} md={6} key={module.title}>
-                        <Card>
-                            <CardContent>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                                    {module.icon}
-                                    <Typography variant="h6" component="h2" sx={{ ml: 2 }}>
-                                        {module.title}
+        <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
+            {/* Hero Section */}
+            <Paper 
+                elevation={0}
+                sx={{
+                    position: 'relative',
+                    mb: 4,
+                    background: '#f8f9fa',
+                    height: '400px',
+                    overflow: 'hidden'
+                }}
+            >
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: 0,
+                        bottom: 0,
+                        right: 0,
+                        left: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            top: 0,
+                            right: 0,
+                            bottom: 0,
+                            left: 0,
+                            background: `url(${process.env.PUBLIC_URL}/manizales-transport.png)`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            opacity: 0.15,
+                            filter: 'grayscale(30%)'
+                        }
+                    }}
+                >
+                    <Container maxWidth="md">
+                        <Typography 
+                            component="h1" 
+                            variant="h2"
+                            color="primary.main"
+                            gutterBottom
+                            align="center"
+                            sx={{
+                                fontWeight: 700,
+                                letterSpacing: '0.02em',
+                                textShadow: '1px 1px 2px rgba(0,0,0,0.1)'
+                            }}
+                        >
+                            Modernizando el Transporte Público de Manizales
+                        </Typography>
+                    </Container>
+                </Box>
+            </Paper>
+
+            {/* Sección de Innovación */}
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
+                <Box sx={{ mb: 8 }}>
+                    <Typography variant="h4" component="h2" gutterBottom align="center" color="primary">
+                        Transformación Digital del Transporte
+                    </Typography>
+                    <Typography variant="body1" paragraph align="center">
+                        Pasamos de registros manuales a un sistema automatizado que permite
+                        el monitoreo en tiempo real y la gestión eficiente de la flota de transporte.
+                    </Typography>
+                </Box>
+
+                {/* Sección de Beneficios */}
+                <Grid container spacing={4}>
+                    {beneficios.map((beneficio) => (
+                        <Grid item xs={12} sm={6} md={3} key={beneficio.title}>
+                            <Card 
+                                sx={{ 
+                                    height: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    transition: '0.3s',
+                                    '&:hover': {
+                                        transform: 'translateY(-5px)',
+                                        boxShadow: 6
+                                    }
+                                }}
+                            >
+                                <CardContent>
+                                    <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+                                        {beneficio.icon}
+                                    </Box>
+                                    <Typography gutterBottom variant="h6" component="h3" align="center">
+                                        {beneficio.title}
                                     </Typography>
-                                </Box>
-                                <Typography variant="body2" color="text.secondary">
-                                    {module.description}
+                                    <Typography variant="body2" color="text.secondary" align="center">
+                                        {beneficio.description}
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    ))}
+                </Grid>
+
+                {/* Sección de Estadísticas */}
+                <Box sx={{ mt: 8 }}>
+                    <Grid container spacing={4}>
+                        <Grid item xs={12} md={6}>
+                            <Paper 
+                                sx={{ 
+                                    p: 3, 
+                                    bgcolor: 'primary.main', 
+                                    color: 'primary.contrastText',
+                                    height: '100%'
+                                }}
+                            >
+                                <Typography variant="h5" gutterBottom>
+                                    Impacto en la Ciudad
                                 </Typography>
-                            </CardContent>
-                            <CardActions>
-                                <Button 
-                                    size="small" 
-                                    onClick={() => navigate(module.path)}
-                                >
-                                    Acceder
-                                </Button>
-                            </CardActions>
-                        </Card>
+                                <Typography variant="body1">
+                                    Nuestro sistema está diseñado para mejorar la experiencia de transporte
+                                    en Manizales, optimizando rutas y tiempos de espera para beneficio
+                                    de todos los ciudadanos.
+                                </Typography>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Paper 
+                                sx={{ 
+                                    p: 3, 
+                                    bgcolor: 'secondary.main', 
+                                    color: 'secondary.contrastText',
+                                    height: '100%'
+                                }}
+                            >
+                                <Typography variant="h5" gutterBottom>
+                                    Tecnología Avanzada
+                                </Typography>
+                                <Typography variant="body1">
+                                    Utilizamos tecnología GPS y análisis de datos en tiempo real
+                                    para proporcionar un servicio de transporte más eficiente y confiable.
+                                </Typography>
+                            </Paper>
+                        </Grid>
                     </Grid>
-                ))}
-            </Grid>
-        </Container>
+                </Box>
+            </Container>
+        </Box>
     );
 };
 
