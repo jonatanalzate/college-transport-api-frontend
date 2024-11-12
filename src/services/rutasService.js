@@ -5,7 +5,11 @@ export const rutasService = {
     getAll: async () => {
         try {
             const response = await api.get('/rutas/');
-            return response.data;
+            return response.data.map(ruta => ({
+                ...ruta,
+                origen_coordenadas: ruta.origen_coordenadas || null,
+                destino_coordenadas: ruta.destino_coordenadas || null
+            }));
         } catch (error) {
             throw error;
         }
