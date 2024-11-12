@@ -29,7 +29,14 @@ const TrayectosListPage = () => {
         {
             id: 'conductor',
             label: 'Conductor',
-            render: (item) => item.conductor ? `${item.conductor.nombre} ${item.conductor.apellido}` : 'N/A'
+            render: (item) => {
+                if (!item.conductor) return 'N/A';
+                const nombreCompleto = [item.conductor.nombre, item.conductor.apellido]
+                    .filter(Boolean)  // Elimina valores falsy (undefined, null, etc.)
+                    .join(' ')
+                    .trim();
+                return nombreCompleto || 'N/A';
+            }
         }
     ];
 
