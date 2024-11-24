@@ -91,6 +91,9 @@ const Navbar = () => {
                         <MenuItem component={RouterLink} to="/rutas/mapa" onClick={handleClose}>
                             Ver Mapa
                         </MenuItem>
+                        <MenuItem component={RouterLink} to="/rutas/cargar" onClick={handleClose}>
+                            Cargar CSV
+                        </MenuItem>
                     </Menu>
 
                     {/* Conductores */}
@@ -112,6 +115,9 @@ const Navbar = () => {
                         <MenuItem component={RouterLink} to="/conductores/nuevo" onClick={handleClose}>
                             Nuevo Conductor
                         </MenuItem>
+                        <MenuItem component={RouterLink} to="/conductores/cargar" onClick={handleClose}>
+                            Cargar CSV
+                        </MenuItem>
                     </Menu>
 
                     {/* Trayectos */}
@@ -132,6 +138,9 @@ const Navbar = () => {
                         </MenuItem>
                         <MenuItem component={RouterLink} to="/trayectos/nuevo" onClick={handleClose}>
                             Nuevo Trayecto
+                        </MenuItem>
+                        <MenuItem component={RouterLink} to="/trayectos/cargar" onClick={handleClose}>
+                            Cargar CSV
                         </MenuItem>
                     </Menu>
 

@@ -13,14 +13,17 @@ import VehiculoUploadPage from './pages/vehiculos/VehiculoUploadPage';
 import RutasListPage from './pages/rutas/RutasListPage';
 import RutaFormPage from './pages/rutas/RutaFormPage';
 import RutaMapPage from './pages/rutas/RutaMapPage';
+import RutaUploadPage from './pages/rutas/RutaUploadPage';
 
 // Conductores
 import ConductoresListPage from './pages/conductores/ConductoresListPage';
 import ConductorFormPage from './pages/conductores/ConductorFormPage';
+import ConductorUploadPage from './pages/conductores/ConductorUploadPage';
 
 // Trayectos
 import TrayectosListPage from './pages/trayectos/TrayectosListPage';
 import TrayectoFormPage from './pages/trayectos/TrayectoFormPage';
+import TrayectoUploadPage from './pages/trayectos/TrayectoUploadPage';
 
 // Monitoreo
 import MonitoreoPage from './pages/monitoreo/MonitoreoPage';
@@ -57,16 +60,19 @@ function App() {
                         <Route path="/rutas/nueva" element={<RutaFormPage />} />
                         <Route path="/rutas/editar/:id" element={<RutaFormPage />} />
                         <Route path="/rutas/mapa" element={<RutaMapPage />} />
+                        <Route path="/rutas/cargar" element={<RutaUploadPage />} />
                         
                         {/* Rutas de Conductores */}
                         <Route path="/conductores/lista" element={<ConductoresListPage />} />
                         <Route path="/conductores/nuevo" element={<ConductorFormPage />} />
                         <Route path="/conductores/editar/:id" element={<ConductorFormPage />} />
+                        <Route path="/conductores/cargar" element={<ConductorUploadPage />} />
                         
                         {/* Rutas de Trayectos */}
                         <Route path="/trayectos/lista" element={<TrayectosListPage />} />
                         <Route path="/trayectos/nuevo" element={<TrayectoFormPage />} />
                         <Route path="/trayectos/editar/:id" element={<TrayectoFormPage />} />
+                        <Route path="/trayectos/cargar" element={<TrayectoUploadPage />} />
                         
                         {/* Monitoreo */}
                         <Route path="/monitoreo" element={<MonitoreoPage />} />
