@@ -12,7 +12,9 @@ import {
     Typography,
     Box,
     Button,
-    Tooltip
+    Tooltip,
+    useTheme,
+    useMediaQuery
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -33,6 +35,8 @@ const ListPage = ({
     const navigate = useNavigate();
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -56,17 +60,19 @@ const ListPage = ({
             }}
         >
             <Box sx={{ 
-                px: 2, 
+                px: { xs: 1, sm: 2 }, 
                 py: 1.5, 
                 display: 'flex', 
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: { xs: 1, sm: 0 },
                 justifyContent: 'space-between', 
-                alignItems: 'center',
-                borderBottom: '1px solid rgba(224, 224, 224, 1)'
+                alignItems: { xs: 'stretch', sm: 'center' }
             }}>
                 <Typography variant="h6" component="h2">
                     {title}
                 </Typography>
                 <Button
+                    fullWidth={isMobile}
                     variant="contained"
                     startIcon={<AddIcon />}
                     onClick={() => navigate(addPath)}
@@ -76,7 +82,14 @@ const ListPage = ({
             </Box>
 
             <TableContainer sx={{ flexGrow: 1 }}>
-                <Table stickyHeader>
+                <Table 
+                    stickyHeader 
+                    sx={{
+                        '& .MuiTableCell-root': {
+                            px: { xs: 1, sm: 2 }
+                        }
+                    }}
+                >
                     <TableHead>
                         <TableRow>
                             {columns.map((column) => (

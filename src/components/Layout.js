@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
@@ -7,18 +7,31 @@ import SideMenu from './SideMenu';
 const DRAWER_WIDTH = 240;
 
 const Layout = () => {
+    const [mobileOpen, setMobileOpen] = useState(false);
+
+    const handleDrawerToggle = () => {
+        setMobileOpen(!mobileOpen);
+    };
+
     return (
         <Box sx={{ display: 'flex' }}>
-            <Navbar />
-            <SideMenu width={DRAWER_WIDTH} />
+            <Navbar onMenuClick={handleDrawerToggle} />
+            <SideMenu 
+                width={DRAWER_WIDTH}
+                mobileOpen={mobileOpen}
+                onMobileClose={handleDrawerToggle}
+            />
             <Box
                 component="main"
                 sx={{
                     position: 'absolute',
                     right: 0,
-                    top: 64, // altura del Navbar
+                    top: 64,
                     bottom: 0,
-                    width: `calc(100% - ${DRAWER_WIDTH}px)`,
+                    width: {
+                        xs: '100%',
+                        sm: `calc(100% - ${DRAWER_WIDTH}px)`
+                    },
                     backgroundColor: '#ffffff',
                     display: 'flex',
                     flexDirection: 'column',

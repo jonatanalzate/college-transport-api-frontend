@@ -20,6 +20,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import ListIcon from '@mui/icons-material/List';
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
+import { useTheme, useMediaQuery } from '@mui/material';
 
 const menuItems = {
     vehiculos: {
@@ -61,9 +62,11 @@ const menuItems = {
     }
 };
 
-const SideMenu = ({ width = 240 }) => {
+const SideMenu = ({ width = 240, mobileOpen = false, onMobileClose }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const [openSections, setOpenSections] = useState(() => {
         const path = location.pathname;
         return {
@@ -92,126 +95,144 @@ const SideMenu = ({ width = 240 }) => {
         }));
     };
 
-    return (
-        <Drawer
-            variant="permanent"
-            sx={{
-                width: width,
-                flexShrink: 0,
-                '& .MuiDrawer-paper': {
-                    width: width,
-                    boxSizing: 'border-box',
-                    backgroundColor: '#ffffff',
-                    borderRight: '1px solid rgba(0, 0, 0, 0.08)',
-                    '& .MuiListItem-root': {
-                        borderRadius: '8px',
-                        mx: 1,
-                        my: 0.5,
-                        '&:hover': {
-                            backgroundColor: 'rgba(25, 118, 210, 0.08)',
-                        },
-                    },
-                    '& .MuiListItemIcon-root': {
-                        minWidth: 40,
-                        color: 'primary.main'
-                    }
-                },
-            }}
-        >
-            <Box sx={{ overflow: 'auto', mt: 8 }}>
-                <List>
-                    {Object.entries(menuItems).map(([key, section]) => (
-                        <React.Fragment key={key}>
-                            <ListItem 
-                                button 
-                                onClick={() => handleSectionClick(key)}
-                                sx={{
-                                    bgcolor: openSections[key] ? 'rgba(25, 118, 210, 0.08)' : 'transparent',
-                                    color: openSections[key] ? 'primary.main' : 'inherit',
-                                }}
-                            >
-                                <ListItemIcon>{section.icon}</ListItemIcon>
-                                <ListItemText 
-                                    primary={section.label}
-                                    primaryTypographyProps={{
-                                        fontWeight: openSections[key] ? 600 : 400
-                                    }}
-                                />
-                                {openSections[key] ? <ExpandLess /> : <ExpandMore />}
-                            </ListItem>
-                            <Collapse in={openSections[key]} timeout="auto" unmountOnExit>
-                                <List component="div" disablePadding>
-                                    {section.items.map((item) => (
-                                        <ListItem
-                                            button
-                                            key={item.path}
-                                            sx={{ 
-                                                pl: 4,
-                                                bgcolor: location.pathname === item.path ? 
-                                                    'rgba(25, 118, 210, 0.08)' : 'transparent',
-                                                color: location.pathname === item.path ? 
-                                                    'primary.main' : 'inherit',
-                                                '&:hover': {
-                                                    bgcolor: 'rgba(25, 118, 210, 0.08)',
-                                                }
-                                            }}
-                                            onClick={() => navigate(item.path)}
-                                        >
-                                            <ListItemIcon 
-                                                sx={{
-                                                    color: location.pathname === item.path ? 
-                                                        'primary.main' : 'inherit'
-                                                }}
-                                            >
-                                                {item.icon}
-                                            </ListItemIcon>
-                                            <ListItemText 
-                                                primary={item.label}
-                                                primaryTypographyProps={{
-                                                    fontSize: '0.9rem',
-                                                    fontWeight: location.pathname === item.path ? 
-                                                        600 : 400
-                                                }}
-                                            />
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            </Collapse>
-                            <Divider sx={{ my: 1, mx: 2 }} />
-                        </React.Fragment>
-                    ))}
-                    <ListItem 
-                        button 
-                        onClick={() => navigate('/monitoreo')}
-                        sx={{
-                            bgcolor: location.pathname === '/monitoreo' ? 
-                                'rgba(25, 118, 210, 0.08)' : 'transparent',
-                            color: location.pathname === '/monitoreo' ? 
-                                'primary.main' : 'inherit',
-                            '&:hover': {
-                                bgcolor: 'rgba(25, 118, 210, 0.08)',
-                            }
-                        }}
-                    >
-                        <ListItemIcon 
+    const drawer = (
+        <Box sx={{ overflow: 'auto', mt: 8 }}>
+            <List>
+                {Object.entries(menuItems).map(([key, section]) => (
+                    <React.Fragment key={key}>
+                        <ListItem 
+                            button 
+                            onClick={() => handleSectionClick(key)}
                             sx={{
-                                color: location.pathname === '/monitoreo' ? 
-                                    'primary.main' : 'inherit'
+                                bgcolor: openSections[key] ? 'rgba(25, 118, 210, 0.08)' : 'transparent',
+                                color: openSections[key] ? 'primary.main' : 'inherit',
                             }}
                         >
-                            <MonitorIcon />
-                        </ListItemIcon>
-                        <ListItemText 
-                            primary="Monitoreo"
-                            primaryTypographyProps={{
-                                fontWeight: location.pathname === '/monitoreo' ? 
-                                    600 : 400
-                            }}
-                        />
-                    </ListItem>
-                </List>
-            </Box>
-        </Drawer>
+                            <ListItemIcon>{section.icon}</ListItemIcon>
+                            <ListItemText 
+                                primary={section.label}
+                                primaryTypographyProps={{
+                                    fontWeight: openSections[key] ? 600 : 400
+                                }}
+                            />
+                            {openSections[key] ? <ExpandLess /> : <ExpandMore />}
+                        </ListItem>
+                        <Collapse in={openSections[key]} timeout="auto" unmountOnExit>
+                            <List component="div" disablePadding>
+                                {section.items.map((item) => (
+                                    <ListItem
+                                        button
+                                        key={item.path}
+                                        sx={{ 
+                                            pl: 4,
+                                            bgcolor: location.pathname === item.path ? 
+                                                'rgba(25, 118, 210, 0.08)' : 'transparent',
+                                            color: location.pathname === item.path ? 
+                                                'primary.main' : 'inherit',
+                                            '&:hover': {
+                                                bgcolor: 'rgba(25, 118, 210, 0.08)',
+                                            }
+                                        }}
+                                        onClick={() => navigate(item.path)}
+                                    >
+                                        <ListItemIcon 
+                                            sx={{
+                                                color: location.pathname === item.path ? 
+                                                    'primary.main' : 'inherit'
+                                            }}
+                                        >
+                                            {item.icon}
+                                        </ListItemIcon>
+                                        <ListItemText 
+                                            primary={item.label}
+                                            primaryTypographyProps={{
+                                                fontSize: '0.9rem',
+                                                fontWeight: location.pathname === item.path ? 
+                                                    600 : 400
+                                            }}
+                                        />
+                                    </ListItem>
+                                ))}
+                            </List>
+                        </Collapse>
+                        <Divider sx={{ my: 1, mx: 2 }} />
+                    </React.Fragment>
+                ))}
+                <ListItem 
+                    button 
+                    onClick={() => navigate('/monitoreo')}
+                    sx={{
+                        bgcolor: location.pathname === '/monitoreo' ? 
+                            'rgba(25, 118, 210, 0.08)' : 'transparent',
+                        color: location.pathname === '/monitoreo' ? 
+                            'primary.main' : 'inherit',
+                        '&:hover': {
+                            bgcolor: 'rgba(25, 118, 210, 0.08)',
+                        }
+                    }}
+                >
+                    <ListItemIcon 
+                        sx={{
+                            color: location.pathname === '/monitoreo' ? 
+                                'primary.main' : 'inherit'
+                        }}
+                    >
+                        <MonitorIcon />
+                    </ListItemIcon>
+                    <ListItemText 
+                        primary="Monitoreo"
+                        primaryTypographyProps={{
+                            fontWeight: location.pathname === '/monitoreo' ? 
+                                600 : 400
+                        }}
+                    />
+                </ListItem>
+            </List>
+        </Box>
+    );
+
+    return (
+        <Box
+            component="nav"
+            sx={{ width: { sm: width }, flexShrink: { sm: 0 } }}
+        >
+            {/* Drawer para móviles */}
+            <Drawer
+                variant="temporary"
+                open={mobileOpen}
+                onClose={onMobileClose}
+                ModalProps={{
+                    keepMounted: true, // Mejor rendimiento en móviles
+                }}
+                sx={{
+                    display: { xs: 'block', sm: 'none' },
+                    '& .MuiDrawer-paper': {
+                        width: width,
+                        boxSizing: 'border-box',
+                        backgroundColor: '#ffffff',
+                    },
+                }}
+            >
+                {drawer}
+            </Drawer>
+
+            {/* Drawer para desktop */}
+            <Drawer
+                variant="permanent"
+                sx={{
+                    display: { xs: 'none', sm: 'block' },
+                    '& .MuiDrawer-paper': {
+                        width: width,
+                        boxSizing: 'border-box',
+                        backgroundColor: '#ffffff',
+                        borderRight: '1px solid rgba(0, 0, 0, 0.08)',
+                    },
+                }}
+                open
+            >
+                {drawer}
+            </Drawer>
+        </Box>
     );
 };
 
