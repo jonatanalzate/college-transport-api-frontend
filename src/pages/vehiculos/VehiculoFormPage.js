@@ -60,29 +60,50 @@ const VehiculoFormPage = () => {
         e.preventDefault();
         try {
             const vehiculoData = {
-                ...vehiculo,
-                año_de_fabricacion: vehiculo.año_de_fabricacion ? Number(vehiculo.año_de_fabricacion) : undefined,
-                capacidad_pasajeros: vehiculo.capacidad_pasajeros ? Number(vehiculo.capacidad_pasajeros) : undefined,
+                placa: vehiculo.placa.trim().toUpperCase(),
+                marca: vehiculo.marca.trim(),
+                modelo: vehiculo.modelo.trim(),
+                lateral: vehiculo.lateral.trim(),
+                año_de_fabricacion: parseInt(vehiculo.año_de_fabricacion),
+                capacidad_pasajeros: parseInt(vehiculo.capacidad_pasajeros),
                 estado_operativo: vehiculo.estado_operativo ? 'activo' : 'inactivo'
             };
+
+            if (!vehiculoData.placa || !vehiculoData.marca || !vehiculoData.modelo || 
+                !vehiculoData.lateral || !vehiculoData.año_de_fabricacion || 
+                !vehiculoData.capacidad_pasajeros) {
+                setError('Todos los campos son requeridos');
+                return;
+            }
+
+            const placaRegex = /^[A-Z]{3}\d{3}$/;
+            if (!placaRegex.test(vehiculoData.placa)) {
+                setError('El formato de la placa debe ser ABC123');
+                return;
+            }
+
+            const currentYear = new Date().getFullYear();
+            if (vehiculoData.año_de_fabricacion < 1900 || vehiculoData.año_de_fabricacion > currentYear) {
+                setError('Año de fabricación inválido');
+                return;
+            }
+
+            if (vehiculoData.capacidad_pasajeros < 1) {
+                setError('La capacidad de pasajeros debe ser mayor a 0');
+                return;
+            }
 
             if (placa) {
                 await vehiculosService.update(placa, vehiculoData);
                 setSuccessMessage('Vehículo actualizado exitosamente');
             } else {
-                if (!vehiculo.placa || !vehiculo.marca || !vehiculo.modelo || 
-                    !vehiculo.lateral || !vehiculo.año_de_fabricacion || 
-                    !vehiculo.capacidad_pasajeros) {
-                    setError('Todos los campos son requeridos para crear un nuevo vehículo');
-                    return;
-                }
                 await vehiculosService.create(vehiculoData);
                 setSuccessMessage('Vehículo creado exitosamente');
             }
             setTimeout(() => navigate('/vehiculos/lista'), 2000);
         } catch (err) {
-            setError(err.message || 'Error al guardar el vehículo');
             console.error('Error completo:', err);
+            setError(err.message || 'Error al guardar el vehículo');
         }
     };
 

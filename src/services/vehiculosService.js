@@ -6,63 +6,78 @@ const ENDPOINTS = {
 };
 
 export const vehiculosService = {
-    getVehiculos: async () => {
+    getAll: async () => {
         try {
-            const response = await api.get(ENDPOINTS.BASE + '/');
+            const userEmail = localStorage.getItem('user_email');
+            const response = await api.get(`${ENDPOINTS.BASE}/?empresa_email=${userEmail}`);
             return response.data;
         } catch (error) {
             throw new Error(error.response?.data?.detail || 'Error al obtener los vehículos');
         }
     },
 
-    getVehiculo: async (id) => {
+    getByPlaca: async (placa) => {
         try {
-            const response = await api.get(`${ENDPOINTS.SINGLE}/${id}`);
+            const userEmail = localStorage.getItem('user_email');
+            const response = await api.get(`${ENDPOINTS.SINGLE}/${placa}?empresa_email=${userEmail}`);
             return response.data;
         } catch (error) {
             throw new Error(error.response?.data?.detail || 'Error al obtener el vehículo');
         }
     },
 
-    createVehiculo: async (vehiculo) => {
+    create: async (vehiculo) => {
         try {
-            const response = await api.post(`${ENDPOINTS.BASE}/`, [vehiculo]);
+            const userEmail = localStorage.getItem('user_email');
+            const vehiculoData = {
+                placa: vehiculo.placa.toUpperCase(),
+                marca: vehiculo.marca.toLowerCase(),
+                modelo: vehiculo.modelo,
+                lateral: vehiculo.lateral,
+                año_de_fabricacion: Number(vehiculo.año_de_fabricacion),
+                capacidad_pasajeros: Number(vehiculo.capacidad_pasajeros),
+                estado_operativo: vehiculo.estado_operativo
+            };
+
+            console.log('Datos a enviar:', vehiculoData);
+            const response = await api.post(
+                `${ENDPOINTS.BASE}/`, 
+                vehiculoData,
+                {
+                    params: {
+                        empresa_email: userEmail
+                    }
+                }
+            );
             return response.data;
         } catch (error) {
+            console.error('Error al crear vehículo:', error.response?.data);
             throw new Error(error.response?.data?.detail || 'Error al crear el vehículo');
         }
     },
 
-    updateVehiculo: async (id, vehiculo) => {
+    update: async (placa, vehiculo) => {
         try {
-            const response = await api.put(`${ENDPOINTS.SINGLE}/${id}`, vehiculo);
+            const userEmail = localStorage.getItem('user_email');
+            const response = await api.put(
+                `${ENDPOINTS.SINGLE}/${placa}?empresa_email=${userEmail}`, 
+                vehiculo
+            );
             return response.data;
         } catch (error) {
             throw new Error(error.response?.data?.detail || 'Error al actualizar el vehículo');
         }
     },
 
-    deleteVehiculo: async (id) => {
+    delete: async (placa) => {
         try {
-            const response = await api.delete(`${ENDPOINTS.SINGLE}/${id}`);
+            const userEmail = localStorage.getItem('user_email');
+            const response = await api.delete(
+                `${ENDPOINTS.SINGLE}/${placa}?empresa_email=${userEmail}`
+            );
             return response.data;
         } catch (error) {
             throw new Error(error.response?.data?.detail || 'Error al eliminar el vehículo');
-        }
-    },
-
-    uploadVehiculos: async (file) => {
-        try {
-            const formData = new FormData();
-            formData.append('file', file);
-            const response = await api.post(`${ENDPOINTS.BASE}/bulk`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            return response.data;
-        } catch (error) {
-            throw new Error(error.response?.data?.detail || 'Error al cargar el archivo de vehículos');
         }
     }
 }; 

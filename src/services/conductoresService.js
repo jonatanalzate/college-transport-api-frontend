@@ -1,27 +1,34 @@
 import api from './api';
 
+const ENDPOINTS = {
+    BASE: '/conductores',
+    SINGLE: '/conductor'
+};
+
 export const conductoresService = {
     getAll: async () => {
         try {
-            const response = await api.get('/conductores/');
+            const userEmail = localStorage.getItem('user_email');
+            const response = await api.get(`${ENDPOINTS.BASE}/?empresa_email=${userEmail}`);
             return response.data;
         } catch (error) {
-            throw error;
+            throw new Error(error.response?.data?.detail || 'Error al obtener los conductores');
         }
     },
 
     getById: async (id) => {
         try {
-            const response = await api.get(`/conductor/${id}`);
+            const userEmail = localStorage.getItem('user_email');
+            const response = await api.get(`${ENDPOINTS.SINGLE}/${id}?empresa_email=${userEmail}`);
             return response.data;
         } catch (error) {
-            console.error('Error al obtener conductor:', error.response?.data);
             throw new Error(error.response?.data?.detail || 'Error al obtener el conductor');
         }
     },
 
     create: async (conductor) => {
         try {
+            const userEmail = localStorage.getItem('user_email');
             const conductorData = {
                 nombre: conductor.nombre.trim(),
                 cedula: conductor.cedula.trim(),
@@ -30,61 +37,42 @@ export const conductoresService = {
                 estado: conductor.estado.toString()
             };
 
-            const response = await api.post('/conductores/', [conductorData]);
-            return response.data[0];
+            const response = await api.post(
+                `${ENDPOINTS.BASE}/`,
+                conductorData,
+                {
+                    params: {
+                        empresa_email: userEmail
+                    }
+                }
+            );
+            return response.data;
         } catch (error) {
-            console.error('Error completo:', error);
             throw new Error(error.response?.data?.detail || 'Error al crear el conductor');
         }
     },
 
-    update: async (id, conductorActualizado) => {
+    update: async (id, conductor) => {
         try {
-            if (!id) {
-                throw new Error('El ID del conductor es requerido');
-            }
-
-            const conductorActual = await conductoresService.getById(id);
-            
-            const conductorData = {
-                id: id,
-                nombre: conductorActualizado.nombre || conductorActual.nombre,
-                cedula: conductorActualizado.cedula || conductorActual.cedula,
-                licencia: conductorActualizado.licencia || conductorActual.licencia,
-                telefono: conductorActualizado.telefono || conductorActual.telefono,
-                estado: (conductorActualizado.estado || conductorActual.estado).toString()
-            };
-
-            Object.keys(conductorData).forEach(key => {
-                if (typeof conductorData[key] === 'string') {
-                    conductorData[key] = conductorData[key].trim();
-                }
-            });
-
-            const response = await api.put(`/conductor/${id}`, conductorData);
+            const userEmail = localStorage.getItem('user_email');
+            const response = await api.put(
+                `${ENDPOINTS.SINGLE}/${id}?empresa_email=${userEmail}`,
+                conductor
+            );
             return response.data;
         } catch (error) {
-            console.error('Error al actualizar:', error.response?.data);
-            throw new Error(error.response?.data?.detail || 'Error al actualizar el conductor');
-        }
-    },
-
-    updatePartial: async (id, conductor) => {
-        try {
-            const response = await api.patch(`/conductor/${id}`, conductor);
-            return response.data;
-        } catch (error) {
-            console.error('Error al actualizar:', error.response?.data);
             throw new Error(error.response?.data?.detail || 'Error al actualizar el conductor');
         }
     },
 
     delete: async (id) => {
         try {
-            const response = await api.delete(`/conductor/${id}`);
+            const userEmail = localStorage.getItem('user_email');
+            const response = await api.delete(
+                `${ENDPOINTS.SINGLE}/${id}?empresa_email=${userEmail}`
+            );
             return response.data;
         } catch (error) {
-            console.error('Error al eliminar:', error.response?.data);
             throw new Error(error.response?.data?.detail || 'Error al eliminar el conductor');
         }
     }
