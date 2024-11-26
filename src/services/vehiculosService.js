@@ -9,9 +9,12 @@ export const vehiculosService = {
     getAll: async () => {
         try {
             const userEmail = localStorage.getItem('user_email');
+            console.log('Fetching vehicles for:', userEmail);
             const response = await api.get(`${ENDPOINTS.BASE}/?empresa_email=${userEmail}`);
+            console.log('Response:', response.data);
             return response.data;
         } catch (error) {
+            console.error('Error details:', error.response?.data);
             throw new Error(error.response?.data?.detail || 'Error al obtener los vehículos');
         }
     },
@@ -42,14 +45,14 @@ export const vehiculosService = {
             console.log('Datos a enviar:', vehiculoData);
             const response = await api.post(
                 `${ENDPOINTS.BASE}/`, 
-                vehiculoData,
+                [vehiculoData],
                 {
                     params: {
                         empresa_email: userEmail
                     }
                 }
             );
-            return response.data;
+            return response.data[0];
         } catch (error) {
             console.error('Error al crear vehículo:', error.response?.data);
             throw new Error(error.response?.data?.detail || 'Error al crear el vehículo');
