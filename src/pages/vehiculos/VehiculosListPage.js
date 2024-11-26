@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Alert, Snackbar } from '@mui/material';
 import ListPage from '../../components/ListPage';
 import { vehiculosService } from '../../services/vehiculosService';
+import BackButton from '../../components/BackButton';
 
 const VehiculosListPage = () => {
     const [vehiculos, setVehiculos] = useState([]);
@@ -49,6 +50,7 @@ const VehiculosListPage = () => {
 
     return (
         <>
+            <BackButton to="/" />
             <ListPage
                 title="Vehículos"
                 items={vehiculos}
@@ -56,6 +58,7 @@ const VehiculosListPage = () => {
                 onDelete={handleDelete}
                 onEdit={handleEdit}
                 addPath="/vehiculos/nuevo"
+                editPath="/vehiculos/editar"
                 loading={false}
                 error={error}
             />

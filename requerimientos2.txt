@@ -1,0 +1,48 @@
+Con tu ayuda, hemos implementado un sistema multiempresa con bases de datos separadas. 
+Aquí está el resumen de los cambios que he realizado en el backend por ende necesito que hagas los cambios necesarios sin dañar lo que ya tenemos, en pocas pañabras vamos a mejorar el frontend:
+
+Sistema de Autenticación:
+Creamos un sistema de login para empresas de transporte
+Cada empresa tiene su propio email y contraseña
+Se usa JWT (tokens) para mantener la sesión
+
+Base de Datos Separadas:
+Cada empresa tiene su propia base de datos física
+Si se registra "socobuses@transport.com", se crea "socobuses.db"
+Si se registra "serviturismo@transport.com", se crea "serviturismo.db"
+La base de datos "main.db" solo guarda la información de autenticación
+
+Aislamiento de Datos:
+Cada empresa solo puede ver y modificar sus propios datos
+Los datos están completamente separados entre empresas
+Una empresa no puede acceder a los datos de otra
+
+Para el frontend, necesitaremos hacer los siguientes cambios:
+
+Implementación del Login:
+"Necesito implementar en el frontend (Angular/React/Vue) un sistema de login que:
+- Tenga un formulario de registro para nuevas empresas (email, nombre, NIT, contraseña)
+- Tenga un formulario de login (email y contraseña)
+- Guarde el token JWT en localStorage
+- Incluya el token en todas las peticiones HTTP posteriores"
+
+Manejo de Autenticación:
+"Necesito implementar en el frontend:
+- Un guard/middleware que proteja las rutas privadas
+- Un interceptor HTTP que añada el token a todas las peticiones
+- Un servicio de autenticación que maneje el estado del login
+- Manejo de la expiración del token"
+
+Actualización de Servicios:
+"Necesito actualizar los servicios existentes del frontend para:
+- Incluir el token en todas las peticiones a la API
+- Manejar los errores de autenticación (401)
+- Redirigir al login cuando el token expire
+- Actualizar los servicios de vehículos/rutas/conductores/trayectos para trabajar con la nueva API"
+
+UI/UX:
+"Necesito implementar en el frontend:
+- Un header que muestre la empresa actual
+- Un botón de logout
+- Mensajes de error apropiados para problemas de autenticación
+- Redirección automática al login cuando no hay sesión"

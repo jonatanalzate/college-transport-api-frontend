@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     Paper,
@@ -33,13 +33,7 @@ const ConductorFormPage = () => {
         estado: '1'
     });
 
-    useEffect(() => {
-        if (id) {
-            loadConductor();
-        }
-    }, [id]);
-
-    const loadConductor = async () => {
+    const loadConductor = useCallback(async () => {
         try {
             const data = await conductoresService.getById(id);
             setConductor(data);
@@ -47,7 +41,13 @@ const ConductorFormPage = () => {
             setError('Error al cargar el conductor');
             console.error(err);
         }
-    };
+    }, [id]);
+
+    useEffect(() => {
+        if (id) {
+            loadConductor();
+        }
+    }, [id, loadConductor]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

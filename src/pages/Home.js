@@ -9,11 +9,9 @@ import {
     Paper,
     useTheme
 } from '@mui/material';
-import TimelineIcon from '@mui/icons-material/Timeline';
 import SpeedIcon from '@mui/icons-material/Speed';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
-import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
 import PeopleIcon from '@mui/icons-material/People';
 
 const Home = () => {

@@ -44,8 +44,25 @@ const ListPage = ({
     };
 
     return (
-        <Paper sx={{ p: 2 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+        <Paper 
+            sx={{ 
+                width: '100%', 
+                height: '100%',
+                overflow: 'hidden',
+                borderRadius: 0,
+                boxShadow: 'none',
+                display: 'flex',
+                flexDirection: 'column'
+            }}
+        >
+            <Box sx={{ 
+                px: 2, 
+                py: 1.5, 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                borderBottom: '1px solid rgba(224, 224, 224, 1)'
+            }}>
                 <Typography variant="h6" component="h2">
                     {title}
                 </Typography>
@@ -58,14 +75,19 @@ const ListPage = ({
                 </Button>
             </Box>
 
-            <TableContainer>
-                <Table>
+            <TableContainer sx={{ flexGrow: 1 }}>
+                <Table stickyHeader>
                     <TableHead>
                         <TableRow>
                             {columns.map((column) => (
-                                <TableCell key={column.id}>{column.label}</TableCell>
+                                <TableCell 
+                                    key={column.id}
+                                    sx={{ fontWeight: 'bold' }}
+                                >
+                                    {column.label}
+                                </TableCell>
                             ))}
-                            <TableCell>Acciones</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Acciones</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -78,10 +100,11 @@ const ListPage = ({
                                             {column.render ? column.render(item) : item[column.id]}
                                         </TableCell>
                                     ))}
-                                    <TableCell>
+                                    <TableCell sx={{ whiteSpace: 'nowrap' }}>
                                         <Tooltip title="Editar">
                                             <IconButton
                                                 onClick={() => onEdit ? onEdit(item) : navigate(`${editPath}/${item.id || item.placa}`)}
+                                                size="small"
                                             >
                                                 <EditIcon />
                                             </IconButton>
@@ -90,6 +113,7 @@ const ListPage = ({
                                             <IconButton
                                                 onClick={() => onDelete(item.id || item.placa)}
                                                 color="error"
+                                                size="small"
                                             >
                                                 <DeleteIcon />
                                             </IconButton>
@@ -101,13 +125,15 @@ const ListPage = ({
                 </Table>
             </TableContainer>
             <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
                 component="div"
                 count={items.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
+                labelRowsPerPage="Filas por página"
+                labelDisplayedRows={({ from, to, count }) => 
+                    `${from}-${to} de ${count !== -1 ? count : `más de ${to}`}`}
             />
         </Paper>
     );

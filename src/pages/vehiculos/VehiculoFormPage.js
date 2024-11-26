@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     Paper,
@@ -18,6 +18,7 @@ import {
     DialogTitle
 } from '@mui/material';
 import { vehiculosService } from '../../services/vehiculosService';
+import BackButton from '../../components/BackButton';
 
 const VehiculoFormPage = () => {
     const { id: placa } = useParams();
@@ -36,13 +37,7 @@ const VehiculoFormPage = () => {
         estado_operativo: 'activo'
     });
 
-    useEffect(() => {
-        if (placa) {
-            loadVehiculo();
-        }
-    }, [placa]);
-
-    const loadVehiculo = async () => {
+    const loadVehiculo = useCallback(async () => {
         try {
             const data = await vehiculosService.getByPlaca(placa);
             setVehiculo({
@@ -53,7 +48,13 @@ const VehiculoFormPage = () => {
             setError('Error al cargar el vehículo');
             console.error(err);
         }
-    };
+    }, [placa]);
+
+    useEffect(() => {
+        if (placa) {
+            loadVehiculo();
+        }
+    }, [placa, loadVehiculo]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -108,6 +109,7 @@ const VehiculoFormPage = () => {
 
     return (
         <>
+            <BackButton to="/vehiculos/lista" />
             <Paper sx={{ p: 3, maxWidth: 600, mx: 'auto' }}>
                 <Typography variant="h6" gutterBottom>
                     {placa ? 'Editar Vehículo' : 'Nuevo Vehículo'}

@@ -2,6 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Container, CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import Navbar from './components/Navbar';
+import AuthGuard from './components/AuthGuard';
+import Layout from './components/Layout';
+import LoginPage from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
 import Home from './pages/Home';
 
 // Vehículos
@@ -44,40 +48,46 @@ function App() {
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <Router>
-                <Navbar />
-                <Container maxWidth="lg">
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        
-                        {/* Rutas de Vehículos */}
-                        <Route path="/vehiculos/lista" element={<VehiculosListPage />} />
-                        <Route path="/vehiculos/nuevo" element={<VehiculoFormPage />} />
-                        <Route path="/vehiculos/editar/:id" element={<VehiculoFormPage />} />
-                        <Route path="/vehiculos/cargar" element={<VehiculoUploadPage />} />
-                        
-                        {/* Rutas de Rutas */}
-                        <Route path="/rutas/lista" element={<RutasListPage />} />
-                        <Route path="/rutas/nueva" element={<RutaFormPage />} />
-                        <Route path="/rutas/editar/:id" element={<RutaFormPage />} />
-                        <Route path="/rutas/mapa" element={<RutaMapPage />} />
-                        <Route path="/rutas/cargar" element={<RutaUploadPage />} />
-                        
-                        {/* Rutas de Conductores */}
-                        <Route path="/conductores/lista" element={<ConductoresListPage />} />
-                        <Route path="/conductores/nuevo" element={<ConductorFormPage />} />
-                        <Route path="/conductores/editar/:id" element={<ConductorFormPage />} />
-                        <Route path="/conductores/cargar" element={<ConductorUploadPage />} />
-                        
-                        {/* Rutas de Trayectos */}
-                        <Route path="/trayectos/lista" element={<TrayectosListPage />} />
-                        <Route path="/trayectos/nuevo" element={<TrayectoFormPage />} />
-                        <Route path="/trayectos/editar/:id" element={<TrayectoFormPage />} />
-                        <Route path="/trayectos/cargar" element={<TrayectoUploadPage />} />
-                        
-                        {/* Monitoreo */}
-                        <Route path="/monitoreo" element={<MonitoreoPage />} />
-                    </Routes>
-                </Container>
+                <Routes>
+                    {/* Rutas públicas */}
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+                    
+                    {/* Rutas protegidas */}
+                    <Route element={<AuthGuard />}>
+                        <Route element={<Layout />}>
+                            <Route path="/" element={<Home />} />
+                            
+                            {/* Rutas de Vehículos */}
+                            <Route path="/vehiculos/lista" element={<VehiculosListPage />} />
+                            <Route path="/vehiculos/nuevo" element={<VehiculoFormPage />} />
+                            <Route path="/vehiculos/editar/:id" element={<VehiculoFormPage />} />
+                            <Route path="/vehiculos/cargar" element={<VehiculoUploadPage />} />
+                            
+                            {/* Rutas de Rutas */}
+                            <Route path="/rutas/lista" element={<RutasListPage />} />
+                            <Route path="/rutas/nueva" element={<RutaFormPage />} />
+                            <Route path="/rutas/editar/:id" element={<RutaFormPage />} />
+                            <Route path="/rutas/mapa" element={<RutaMapPage />} />
+                            <Route path="/rutas/cargar" element={<RutaUploadPage />} />
+                            
+                            {/* Rutas de Conductores */}
+                            <Route path="/conductores/lista" element={<ConductoresListPage />} />
+                            <Route path="/conductores/nuevo" element={<ConductorFormPage />} />
+                            <Route path="/conductores/editar/:id" element={<ConductorFormPage />} />
+                            <Route path="/conductores/cargar" element={<ConductorUploadPage />} />
+                            
+                            {/* Rutas de Trayectos */}
+                            <Route path="/trayectos/lista" element={<TrayectosListPage />} />
+                            <Route path="/trayectos/nuevo" element={<TrayectoFormPage />} />
+                            <Route path="/trayectos/editar/:id" element={<TrayectoFormPage />} />
+                            <Route path="/trayectos/cargar" element={<TrayectoUploadPage />} />
+                            
+                            {/* Monitoreo */}
+                            <Route path="/monitoreo" element={<MonitoreoPage />} />
+                        </Route>
+                    </Route>
+                </Routes>
             </Router>
         </ThemeProvider>
     );

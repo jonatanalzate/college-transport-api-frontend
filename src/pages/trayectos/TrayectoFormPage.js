@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     Paper,
@@ -51,16 +51,6 @@ const TrayectoFormPage = () => {
     const [conductoresDisponibles, setConductoresDisponibles] = useState([]);
     const [vehiculosDisponibles, setVehiculosDisponibles] = useState([]);
 
-    useEffect(() => {
-        loadTrayectosActivos();
-        loadRutas();
-        loadVehiculos();
-        loadConductores();
-        if (id) {
-            loadTrayecto();
-        }
-    }, [id]);
-
     const loadTrayectosActivos = async () => {
         try {
             const data = await trayectosService.getActivos();
@@ -102,12 +92,11 @@ const TrayectoFormPage = () => {
         }
     };
 
-    const loadTrayecto = async () => {
+    const loadTrayecto = useCallback(async () => {
         try {
             const data = await trayectosService.getById(id);
             setTrayecto({
                 ...data,
-                ruta_id: data.ruta_id || '',
                 fecha: new Date(data.fecha),
                 hora_salida: new Date(`1970-01-01T${data.hora_salida}`),
                 hora_llegada: new Date(`1970-01-01T${data.hora_llegada}`)
@@ -116,7 +105,17 @@ const TrayectoFormPage = () => {
             setError('Error al cargar el trayecto');
             console.error(err);
         }
-    };
+    }, [id]);
+
+    useEffect(() => {
+        loadTrayectosActivos();
+        loadRutas();
+        loadVehiculos();
+        loadConductores();
+        if (id) {
+            loadTrayecto();
+        }
+    }, [id, loadTrayecto]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

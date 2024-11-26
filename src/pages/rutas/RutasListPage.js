@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Alert, Snackbar } from '@mui/material';
 import ListPage from '../../components/ListPage';
 import { rutasService } from '../../services/rutasService';
+import BackButton from '../../components/BackButton';
 
 const RutasListPage = () => {
     const [rutas, setRutas] = useState([]);
@@ -62,6 +63,7 @@ const RutasListPage = () => {
 
     return (
         <>
+            <BackButton to="/" />
             <ListPage
                 title="Rutas"
                 items={rutas}

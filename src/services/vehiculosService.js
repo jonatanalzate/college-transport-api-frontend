@@ -1,111 +1,68 @@
 import api from './api';
-import { ENDPOINTS } from '../config/api.config';
+
+const ENDPOINTS = {
+    BASE: '/vehiculos',
+    SINGLE: '/vehiculo'
+};
 
 export const vehiculosService = {
-    // Obtener todos los vehículos
-    getAll: async () => {
+    getVehiculos: async () => {
         try {
-            const response = await api.get('/vehiculos/');
+            const response = await api.get(ENDPOINTS.BASE + '/');
             return response.data;
         } catch (error) {
-            throw error;
+            throw new Error(error.response?.data?.detail || 'Error al obtener los vehículos');
         }
     },
 
-    // Obtener un vehículo por placa
-    getByPlaca: async (placa) => {
+    getVehiculo: async (id) => {
         try {
-            const response = await api.get(`/vehiculo/${placa}`);
+            const response = await api.get(`${ENDPOINTS.SINGLE}/${id}`);
             return response.data;
         } catch (error) {
-            console.error('Error al obtener vehículo:', error.response?.data);
             throw new Error(error.response?.data?.detail || 'Error al obtener el vehículo');
         }
     },
 
-    // Crear vehículos (acepta un array)
-    create: async (vehiculo) => {
+    createVehiculo: async (vehiculo) => {
         try {
-            const vehiculoData = {
-                placa: vehiculo.placa.trim(),
-                marca: vehiculo.marca.trim(),
-                modelo: vehiculo.modelo.trim(),
-                lateral: vehiculo.lateral.trim(),
-                año_de_fabricacion: Number(vehiculo.año_de_fabricacion),
-                capacidad_pasajeros: Number(vehiculo.capacidad_pasajeros),
-                estado_operativo: vehiculo.estado_operativo
-            };
-
-            // El endpoint espera un array de vehículos
-            const response = await api.post('/vehiculos/', [vehiculoData]);
-            return response.data[0]; // Retornamos el primer vehículo creado
+            const response = await api.post(`${ENDPOINTS.BASE}/`, [vehiculo]);
+            return response.data;
         } catch (error) {
-            console.error('Error completo:', error);
             throw new Error(error.response?.data?.detail || 'Error al crear el vehículo');
         }
     },
 
-    // Actualizar un vehículo (PUT)
-    update: async (placa, vehiculoActualizado) => {
+    updateVehiculo: async (id, vehiculo) => {
         try {
-            if (!placa) {
-                throw new Error('La placa del vehículo es requerida');
-            }
-
-            // Primero obtenemos el vehículo actual para obtener su ID
-            const vehiculoActual = await vehiculosService.getByPlaca(placa);
-            
-            const vehiculoData = {
-                id: vehiculoActual.id, // Importante: incluir el ID
-                placa: vehiculoActualizado.placa?.trim(),
-                marca: vehiculoActualizado.marca?.trim(),
-                modelo: vehiculoActualizado.modelo?.trim(),
-                lateral: vehiculoActualizado.lateral?.trim(),
-                año_de_fabricacion: Number(vehiculoActualizado.año_de_fabricacion),
-                capacidad_pasajeros: Number(vehiculoActualizado.capacidad_pasajeros),
-                estado_operativo: vehiculoActualizado.estado_operativo
-            };
-
-            // Usamos el ID para el PUT
-            const response = await api.put(`/vehiculo/${vehiculoActual.id}`, vehiculoData);
+            const response = await api.put(`${ENDPOINTS.SINGLE}/${id}`, vehiculo);
             return response.data;
         } catch (error) {
-            console.error('Error al actualizar:', error.response?.data);
             throw new Error(error.response?.data?.detail || 'Error al actualizar el vehículo');
         }
     },
 
-    // Actualizar parcialmente un vehículo (PATCH)
-    updatePartial: async (id, vehiculo) => {
+    deleteVehiculo: async (id) => {
         try {
-            const response = await api.patch(`/vehiculo/${id}`, vehiculo);
+            const response = await api.delete(`${ENDPOINTS.SINGLE}/${id}`);
             return response.data;
         } catch (error) {
-            console.error('Error al actualizar:', error.response?.data);
-            throw new Error(error.response?.data?.detail || 'Error al actualizar el vehículo');
-        }
-    },
-
-    // Eliminar un vehículo
-    delete: async (placa) => {
-        try {
-            const response = await api.delete(`/vehiculo/${placa}`);
-            return response.data;
-        } catch (error) {
-            console.error('Error al eliminar:', error.response?.data);
             throw new Error(error.response?.data?.detail || 'Error al eliminar el vehículo');
         }
     },
 
-    // Obtener un vehículo por ID o placa
-    getById: async (idOrPlaca) => {
+    uploadVehiculos: async (file) => {
         try {
-            // Primero intentamos obtener por placa
-            const response = await api.get(`/vehiculo/${idOrPlaca}`);
+            const formData = new FormData();
+            formData.append('file', file);
+            const response = await api.post(`${ENDPOINTS.BASE}/bulk`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
             return response.data;
         } catch (error) {
-            console.error('Error al obtener vehículo:', error.response?.data);
-            throw new Error(error.response?.data?.detail || 'Error al obtener el vehículo');
+            throw new Error(error.response?.data?.detail || 'Error al cargar el archivo de vehículos');
         }
     }
 }; 

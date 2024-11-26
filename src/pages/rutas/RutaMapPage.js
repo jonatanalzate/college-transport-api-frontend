@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Paper, Typography, Box, Alert } from '@mui/material';
 import MapView from '../../components/MapView';
 import { rutasService } from '../../services/rutasService';
+import BackButton from '../../components/BackButton';
 
 const RutaMapPage = () => {
-    const [rutas, setRutas] = useState([]);
     const [selectedRoute, setSelectedRoute] = useState(null);
     const [error, setError] = useState(null);
 
@@ -15,7 +15,6 @@ const RutaMapPage = () => {
     const loadRutas = async () => {
         try {
             const data = await rutasService.getAll();
-            setRutas(data);
             if (data.length > 0) {
                 setSelectedRoute(data[0]);
             }
@@ -26,27 +25,30 @@ const RutaMapPage = () => {
     };
 
     return (
-        <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-                Visualización de Rutas
-            </Typography>
-            
-            {error && (
-                <Alert severity="error" sx={{ mb: 2 }}>
-                    {error}
-                </Alert>
-            )}
+        <>
+            <BackButton to="/rutas/lista" />
+            <Paper sx={{ p: 2 }}>
+                <Typography variant="h6" gutterBottom>
+                    Visualización de Rutas
+                </Typography>
+                
+                {error && (
+                    <Alert severity="error" sx={{ mb: 2 }}>
+                        {error}
+                    </Alert>
+                )}
 
-            {selectedRoute && !selectedRoute.origen_coordenadas && (
-                <Alert severity="info" sx={{ mb: 2 }}>
-                    Esta ruta no tiene coordenadas definidas.
-                </Alert>
-            )}
+                {selectedRoute && !selectedRoute.origen_coordenadas && (
+                    <Alert severity="info" sx={{ mb: 2 }}>
+                        Esta ruta no tiene coordenadas definidas.
+                    </Alert>
+                )}
 
-            <Box sx={{ height: '70vh' }}>
-                <MapView route={selectedRoute} />
-            </Box>
-        </Paper>
+                <Box sx={{ height: '70vh' }}>
+                    <MapView route={selectedRoute} />
+                </Box>
+            </Paper>
+        </>
     );
 };
 

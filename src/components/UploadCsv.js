@@ -1,57 +1,70 @@
 import React, { useState } from 'react';
-import Papa from 'papaparse';
-import { Button, Box, Alert } from '@mui/material';
+import { Button, Box, Alert, Typography } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { uploadCsv } from '../services/api';
 
-const UploadCsv = ({ endpoint, onUploadSuccess }) => {
+const UploadCsv = ({ endpoint, onUploadSuccess, title }) => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleFileUpload = async (event) => {
         const file = event.target.files[0];
         if (!file) return;
 
+        setLoading(true);
+        setError(null);
+        setSuccess(false);
+
         try {
-            Papa.parse(file, {
-                complete: async (results) => {
-                    try {
-                        await uploadCsv(endpoint, file);
-                        setSuccess(true);
-                        setError(null);
-                        if (onUploadSuccess) onUploadSuccess();
-                    } catch (err) {
-                        setError('Error al cargar el archivo: ' + err.message);
-                        setSuccess(false);
-                    }
-                },
-                error: (error) => {
-                    setError('Error al procesar el archivo CSV: ' + error.message);
-                    setSuccess(false);
-                }
-            });
+            const result = await uploadCsv(endpoint, file);
+            setSuccess(true);
+            if (onUploadSuccess) {
+                onUploadSuccess(result);
+            }
         } catch (err) {
-            setError('Error al procesar el archivo: ' + err.message);
-            setSuccess(false);
+            setError(err.message || 'Error al cargar el archivo');
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <Box sx={{ my: 2 }}>
+        <Box sx={{ my: 3 }}>
+            <Typography variant="h6" gutterBottom>
+                {title || 'Cargar archivo CSV'}
+            </Typography>
+            
             <input
                 accept=".csv"
                 style={{ display: 'none' }}
-                id="raised-button-file"
+                id="csv-file"
                 type="file"
                 onChange={handleFileUpload}
+                disabled={loading}
             />
-            <label htmlFor="raised-button-file">
-                <Button variant="contained" component="span">
-                    Cargar CSV
+            <label htmlFor="csv-file">
+                <Button
+                    variant="contained"
+                    component="span"
+                    startIcon={<CloudUploadIcon />}
+                    disabled={loading}
+                >
+                    {loading ? 'Cargando...' : 'Seleccionar archivo CSV'}
                 </Button>
             </label>
+
+            {error && (
+                <Alert severity="error" sx={{ mt: 2 }}>
+                    {error}
+                </Alert>
+            )}
             
-            {error && <Alert severity="error">{error}</Alert>}
-            {success && <Alert severity="success">Archivo cargado exitosamente</Alert>}
+            {success && (
+                <Alert severity="success" sx={{ mt: 2 }}>
+                    Archivo cargado exitosamente
+                </Alert>
+            )}
         </Box>
     );
 };

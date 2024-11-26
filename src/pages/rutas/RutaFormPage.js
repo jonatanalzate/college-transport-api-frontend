@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     Paper,
@@ -16,6 +16,7 @@ import {
     DialogTitle
 } from '@mui/material';
 import { rutasService } from '../../services/rutasService';
+import BackButton from '../../components/BackButton';
 
 const RutaFormPage = () => {
     const { id } = useParams();
@@ -32,13 +33,7 @@ const RutaFormPage = () => {
         duracion_estimada: ''
     });
 
-    useEffect(() => {
-        if (id) {
-            loadRuta();
-        }
-    }, [id]);
-
-    const loadRuta = async () => {
+    const loadRuta = useCallback(async () => {
         try {
             const data = await rutasService.getById(id);
             setRuta(data);
@@ -46,7 +41,13 @@ const RutaFormPage = () => {
             setError('Error al cargar la ruta');
             console.error(err);
         }
-    };
+    }, [id]);
+
+    useEffect(() => {
+        if (id) {
+            loadRuta();
+        }
+    }, [id, loadRuta]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -96,6 +97,7 @@ const RutaFormPage = () => {
 
     return (
         <>
+            <BackButton to="/rutas/lista" />
             <Paper sx={{ p: 3, maxWidth: 600, mx: 'auto' }}>
                 <Typography variant="h6" gutterBottom>
                     {id ? 'Editar Ruta' : 'Nueva Ruta'}

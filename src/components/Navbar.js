@@ -1,159 +1,75 @@
-import React, { useState } from 'react';
-import {
-    AppBar,
-    Toolbar,
-    Typography,
-    Button,
+import React from 'react';
+import { 
+    AppBar, 
+    Toolbar, 
+    Typography, 
     Box,
+    IconButton,
     Menu,
-    MenuItem,
-    IconButton
+    MenuItem
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
-import HomeIcon from '@mui/icons-material/Home';
-import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
-import RouteIcon from '@mui/icons-material/Route';
-import PeopleIcon from '@mui/icons-material/People';
-import TimelineIcon from '@mui/icons-material/Timeline';
-import MapIcon from '@mui/icons-material/Map';
+import { useNavigate } from 'react-router-dom';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import authService from '../services/authService';
 
 const Navbar = () => {
-    const [vehiculosMenu, setVehiculosMenu] = useState(null);
-    const [rutasMenu, setRutasMenu] = useState(null);
-    const [conductoresMenu, setConductoresMenu] = useState(null);
-    const [trayectosMenu, setTrayectosMenu] = useState(null);
+    const navigate = useNavigate();
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const userEmail = authService.getCurrentUser();
+
+    const handleMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
 
     const handleClose = () => {
-        setVehiculosMenu(null);
-        setRutasMenu(null);
-        setConductoresMenu(null);
-        setTrayectosMenu(null);
+        setAnchorEl(null);
+    };
+
+    const handleLogout = () => {
+        authService.logout();
+        navigate('/login');
     };
 
     return (
-        <AppBar position="static" sx={{ mb: 3 }}>
+        <AppBar position="fixed">
             <Toolbar>
-                <IconButton
-                    color="inherit"
-                    component={RouterLink}
-                    to="/"
-                    sx={{ mr: 2 }}
-                >
-                    <HomeIcon />
-                </IconButton>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     Sistema de Transporte
                 </Typography>
-                <Box sx={{ display: 'flex', gap: 2 }}>
-                    {/* Vehículos */}
-                    <Button
-                        color="inherit"
-                        startIcon={<DirectionsBusIcon />}
-                        onClick={(e) => setVehiculosMenu(e.currentTarget)}
-                    >
-                        Vehículos
-                    </Button>
-                    <Menu
-                        anchorEl={vehiculosMenu}
-                        open={Boolean(vehiculosMenu)}
-                        onClose={handleClose}
-                    >
-                        <MenuItem component={RouterLink} to="/vehiculos/lista" onClick={handleClose}>
-                            Listar Vehículos
-                        </MenuItem>
-                        <MenuItem component={RouterLink} to="/vehiculos/nuevo" onClick={handleClose}>
-                            Nuevo Vehículo
-                        </MenuItem>
-                        <MenuItem component={RouterLink} to="/vehiculos/cargar" onClick={handleClose}>
-                            Cargar CSV
-                        </MenuItem>
-                    </Menu>
 
-                    {/* Rutas */}
-                    <Button
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Typography variant="body1" sx={{ mr: 2 }}>
+                        {userEmail}
+                    </Typography>
+                    <IconButton
+                        size="large"
+                        aria-label="account of current user"
+                        aria-controls="menu-appbar"
+                        aria-haspopup="true"
+                        onClick={handleMenu}
                         color="inherit"
-                        startIcon={<RouteIcon />}
-                        onClick={(e) => setRutasMenu(e.currentTarget)}
                     >
-                        Rutas
-                    </Button>
-                    <Menu
-                        anchorEl={rutasMenu}
-                        open={Boolean(rutasMenu)}
-                        onClose={handleClose}
-                    >
-                        <MenuItem component={RouterLink} to="/rutas/lista" onClick={handleClose}>
-                            Listar Rutas
-                        </MenuItem>
-                        <MenuItem component={RouterLink} to="/rutas/nueva" onClick={handleClose}>
-                            Nueva Ruta
-                        </MenuItem>
-                        <MenuItem component={RouterLink} to="/rutas/mapa" onClick={handleClose}>
-                            Ver Mapa
-                        </MenuItem>
-                        <MenuItem component={RouterLink} to="/rutas/cargar" onClick={handleClose}>
-                            Cargar CSV
-                        </MenuItem>
-                    </Menu>
-
-                    {/* Conductores */}
-                    <Button
-                        color="inherit"
-                        startIcon={<PeopleIcon />}
-                        onClick={(e) => setConductoresMenu(e.currentTarget)}
-                    >
-                        Conductores
-                    </Button>
-                    <Menu
-                        anchorEl={conductoresMenu}
-                        open={Boolean(conductoresMenu)}
-                        onClose={handleClose}
-                    >
-                        <MenuItem component={RouterLink} to="/conductores/lista" onClick={handleClose}>
-                            Listar Conductores
-                        </MenuItem>
-                        <MenuItem component={RouterLink} to="/conductores/nuevo" onClick={handleClose}>
-                            Nuevo Conductor
-                        </MenuItem>
-                        <MenuItem component={RouterLink} to="/conductores/cargar" onClick={handleClose}>
-                            Cargar CSV
-                        </MenuItem>
-                    </Menu>
-
-                    {/* Trayectos */}
-                    <Button
-                        color="inherit"
-                        startIcon={<TimelineIcon />}
-                        onClick={(e) => setTrayectosMenu(e.currentTarget)}
-                    >
-                        Trayectos
-                    </Button>
-                    <Menu
-                        anchorEl={trayectosMenu}
-                        open={Boolean(trayectosMenu)}
-                        onClose={handleClose}
-                    >
-                        <MenuItem component={RouterLink} to="/trayectos/lista" onClick={handleClose}>
-                            Listar Trayectos
-                        </MenuItem>
-                        <MenuItem component={RouterLink} to="/trayectos/nuevo" onClick={handleClose}>
-                            Nuevo Trayecto
-                        </MenuItem>
-                        <MenuItem component={RouterLink} to="/trayectos/cargar" onClick={handleClose}>
-                            Cargar CSV
-                        </MenuItem>
-                    </Menu>
-
-                    {/* Monitoreo */}
-                    <Button
-                        color="inherit"
-                        startIcon={<MapIcon />}
-                        component={RouterLink}
-                        to="/monitoreo"
-                    >
-                        Monitoreo
-                    </Button>
+                        <AccountCircle />
+                    </IconButton>
                 </Box>
+
+                <Menu
+                    id="menu-appbar"
+                    anchorEl={anchorEl}
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                >
+                    <MenuItem onClick={handleLogout}>Cerrar Sesión</MenuItem>
+                </Menu>
             </Toolbar>
         </AppBar>
     );
